@@ -1,0 +1,40 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.js"></script>
+<script>
+    $('#phone-mask').inputmask({
+        "mask": "+\\9\\98(99) 999-99-99"
+    });
+    $('#messages-modal').modal('show');
+</script>
+
+
+{#-----------------------Region , District--------------------------#}
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $("#id_region").change(function(){
+            let region_id = $(this).val();
+            if(region_id) {
+                $.ajax({
+                    url: "{% url 'district-list' %}",
+                    data: {'region_id': region_id},
+                    dataType: 'json',
+                    success: function(data){
+                        let citySelect = $("#id_district");
+                        citySelect.empty();
+                        citySelect.append('<option>Tuman/Shahar tanlang</option>');
+                        $.each(data, function(index, city){
+                            citySelect.append('<option value="' + city.id + '">' + city.name + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $("#id_district").empty();
+                $("#id_district").append('<option value="">Shahar/Tumanni tanlang</option>');
+            }
+        });
+    });
+</script>

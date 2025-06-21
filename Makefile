@@ -11,3 +11,11 @@ loaddata:
 
 dumpdata:
 	python3 manage.py dumpdata apps.Category > category.json
+
+translate:
+	django-admin makemessages -l uz
+	django-admin makemessages -l en
+	django-admin makemessages -l ru
+
+compile:
+	django-admin compilemessages

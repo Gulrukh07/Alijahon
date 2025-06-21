@@ -856,8 +856,8 @@
 
                                 <div class="bg-white dark__bg-1000 rounded-2 py-2">
 
-                                    <a class="dropdown-item header_navbar_lang_menu_dropdown_item" href="/profile">
-                                        Profil
+                                    <a class="dropdown-item header_navbar_lang_menu_dropdown_item" href="{% url 'profile' %}">
+                                        {%  trans 'Profile' %}
                                     </a>
                                     <a class="dropdown-item header_navbar_lang_menu_dropdown_item"
                                        href="/profile/liked-products">
@@ -879,8 +879,8 @@
                                     </a>
 
                                     <a class="dropdown-item header_navbar_lang_menu_dropdown_item"
-                                       href="/profile/logout">
-                                        Chiqish
+                                       href="{% url 'logout' %}">
+                                        {% trans 'Logout' %}
                                     </a>
                                     <a class="dropdown-item header_navbar_lang_menu_dropdown_item" target="_blank"
                                        href="https://t.me/Braaaaatt">
@@ -991,6 +991,7 @@
         console.log(availableTags);
     });
 </script>
+{% include 'apps/base/scripts.html' %}
 
 
 <ul class="ui-autocomplete ui-menu ui-widget ui-widget-content ui-corner-all" role="listbox"
