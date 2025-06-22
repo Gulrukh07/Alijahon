@@ -1,11 +1,12 @@
 import re
 
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django.forms import Form
 from django.forms.fields import CharField
 from django.forms.models import ModelForm
 from django.utils.translation import gettext as _
+
 
 from authenticate.models import User
 
@@ -53,6 +54,19 @@ class ProfileForm(ModelForm):
     class Meta:
         model = User
         fields = 'first_name', 'last_name', 'address', 'about', 'telegram_id','district'
+
+
+class PasswordForm(Form):
+    old_password = CharField(max_length=10)
+    new_password = CharField(max_length=10)
+    confirm_password = CharField(max_length=10)
+
+    def clean_confirm_password(self):
+        new_password = self.cleaned_data.get("new_password")
+        confirm_password = self.cleaned_data.get("confirm_password")
+        if new_password != confirm_password:
+            raise ValidationError(_("Passwords don't match"))
+
 
 
 

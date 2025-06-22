@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import redirect
@@ -7,7 +8,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import FormView, UpdateView
 
-from authenticate.forms import AuthForm, ProfileForm
+from authenticate.forms import AuthForm, ProfileForm, PasswordForm
 from authenticate.models import User, Region, District
 
 
@@ -59,6 +60,36 @@ class LogoutView(View):
     def get(self, request):
         logout(self.request)
         return redirect('auth')
+
+
+class PasswordUpdateView(LoginRequiredMixin,FormView):
+    template_name = 'auth/profile.html'
+    form_class = PasswordForm
+    success_url = reverse_lazy('profile')
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        old_password = data.get('old_password')
+        new_password = data.get('new_password')
+        if check_password(old_password, self.request.user.password):
+            user = self.request.user
+            user.set_password(new_password)
+            user.save()
+            login(self.request, user)
+            messages.success(self.request, 'Your password was successfully updated!')
+            return redirect('auth')
+        else:
+            messages.error(self.request, 'Your password was not correct!')
+            return redirect('profile')
+
+
+    def form_invalid(self, form):
+        for error in form.errors.values():
+            messages.error(self.request, error[0])
+        return super().form_invalid(form)
+
+
+
 
 
 
