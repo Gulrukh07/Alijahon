@@ -1,0 +1,47 @@
+{%  extends 'apps/base/base-page.html' %}
+{% block body %}
+    <div class="container text-center pb-5 card" style="margin-top: 80px;">
+        <div class="card-body" style="margin-top: 30px">
+
+        </div>
+
+        <img style="height: 100px; width:100px; margin-left:45%; margin-top: 30px" src="https://img.icons8.com/cute-clipart/64/ok.png" alt="Green Success Image">
+        <h3 class="mt-4">Arizangiz qabul qilindi!</h3>
+        <p>Batafsil ma'lumot uchun operator yaqin vaqt ichida siz bilan aloqaga chiqadi.</p>
+        <p>Iltimos, telefoningiz yoqilgan holda bo'lsin!</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Mahsulot</th>
+                <th scope="col">Summa</th>
+                <th scope="col">Soni</th>
+                <th scope="col">Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="col">{{ order.product.title }}</th>
+                <th scope="col">{{ order.product.price }}</th>
+                <th scope="col">{{ order.quantity }}</th>
+                <th scope="col">{{ order.total }}</th>
+            </tr>
+
+            <tr>
+                <th scope="col">Yetkazib berish</th>
+                <th scope="col">30000</th>
+            </tr>
+
+
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col-md-6">
+
+
+            </div>
+            <div class="col-md-6 mt-3">
+                <a href="/" class="btn btn-primary w-50">Boshqa mahsulotlar</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

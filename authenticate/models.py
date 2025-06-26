@@ -76,5 +76,9 @@ class User(AbstractUser):
     balance = DecimalField(max_digits=10 , decimal_places=0 , default=0)
     role = CharField(max_length=50 , choices=RoleType , default=RoleType.SELLER)
 
+    @property
+    def wishlist_products(self):
+        return list(self.wishlists.all().values_list("product_id", flat=True))
+
 
 

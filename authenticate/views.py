@@ -62,7 +62,7 @@ class LogoutView(View):
         return redirect('auth')
 
 
-class PasswordUpdateView(LoginRequiredMixin,FormView):
+class PasswordFormView(LoginRequiredMixin,FormView):
     template_name = 'auth/profile.html'
     form_class = PasswordForm
     success_url = reverse_lazy('profile')
@@ -82,11 +82,12 @@ class PasswordUpdateView(LoginRequiredMixin,FormView):
             messages.error(self.request, 'Your password was not correct!')
             return redirect('profile')
 
-
     def form_invalid(self, form):
         for error in form.errors.values():
             messages.error(self.request, error[0])
         return super().form_invalid(form)
+
+
 
 
 

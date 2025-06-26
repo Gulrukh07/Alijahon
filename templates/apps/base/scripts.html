@@ -38,3 +38,45 @@
         });
     });
 </script>
+
+{#--------------------- wish list ------------------------#}
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".like-button").forEach(button => {
+            button.addEventListener("click", function () {
+                console.log("hello")
+                let productId = this.dataset.productId;
+                console.log(productId)
+
+                let button = this;
+
+                fetch(`/wishlist/${productId}`, {
+                    method: "GET"
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.liked) {
+                            button.classList.add("bg-danger");  // Like bosilgan bo‘lsa qizil bo‘ladi
+                        } else {
+                            button.classList.remove("bg-danger"); // Unlike bo‘lsa rang o‘zgaradi
+                        }
+                    });
+            });
+        });
+    });
+</script>
+
+{#========== oqim yaratish uchun ============= #}
+<script>
+    $('.btn_open_modal').on('click', function () {
+        let product_id = $(this).attr('name');
+        $('#hidden_product').val(product_id);
+        let benefit = $(this).data('benefit'); // Misol uchun data-benefit="20000"
+        // Placeholder'ni yangilash
+        $('#id_discount').attr('placeholder', 'Chegirma miqdori: ' + benefit + ' so\'mdan oshmasin');
+    })
+</script>
+
+

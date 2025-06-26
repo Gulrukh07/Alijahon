@@ -82,9 +82,17 @@
                 <div class="card mb-3">
                     <div class="card-header">
                         <h5 class="mb-0">{% translate 'Change the password' %}</h5>
+                        {% if messages %}
+                            {% for message in messages %}
+                                <h4 style="color: #e03e2d;">{{ message }}</h4>
+
+                            {% endfor %}
+
+
+                        {% endif %}
                     </div>
                     <div class="card-body bg-light">
-                        <form action="{% url 'change-password' %} " method="post">
+                        <form action="{% url 'change-password' %}" method="post">
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label class="form-label" for="old-password">Oldingi parol</label>
