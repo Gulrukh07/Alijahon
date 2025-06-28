@@ -7,7 +7,7 @@ from django.forms.fields import CharField
 from django.forms.models import ModelForm
 from django.utils.translation import gettext as _
 
-
+from apps.models import Thread, Product
 from authenticate.models import User
 
 class AuthForm(Form):
@@ -66,7 +66,6 @@ class PasswordForm(Form):
         confirm_password = self.cleaned_data.get("confirm_password")
         if new_password != confirm_password:
             raise ValidationError(_("Passwords don't match"))
-
 
 
 

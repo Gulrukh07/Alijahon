@@ -710,26 +710,26 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link active" href="{% url 'thread' %}" aria-expanded="false">
+                                        <a class="nav-link active" href="{% url 'thread-list' %}" aria-expanded="false">
                                             <div class="d-flex align-items-center"><span
                                                     class="nav-link-text ps-1">Oqim</span>
                                             </div>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link active" href="/admin_page/stats" aria-expanded="false">
+                                        <a class="nav-link active" href="{% url 'thread-statistics' %}?period=all" aria-expanded="false">
                                             <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Statistika</span>
                                             </div>
                                         </a>
                                     </li>
+{#                                    <li class="nav-item">#}
+{#                                        <a class="nav-link active" href="/admin_page/requests" aria-expanded="false">#}
+{#                                            <div class="d-flex align-items-center"><span class="nav-link-text ps-1">So'rovlar</span>#}
+{#                                            </div>#}
+{#                                        </a>#}
+{#                                    </li>#}
                                     <li class="nav-item">
-                                        <a class="nav-link active" href="/admin_page/requests" aria-expanded="false">
-                                            <div class="d-flex align-items-center"><span class="nav-link-text ps-1">So'rovlar</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link active" href="/admin_page/competition" aria-expanded="false">
+                                        <a class="nav-link active" href="{% url 'giveaway' %}" aria-expanded="false">
                                             <div class="d-flex align-items-center"><span
                                                     class="nav-link-text ps-1">Konkurs</span>
                                             </div>
@@ -858,11 +858,11 @@
                                         {%  trans 'Profile' %}
                                     </a>
                                     <a class="dropdown-item header_navbar_lang_menu_dropdown_item"
-                                       href="/profile/liked-products">
+                                       href="{% url 'wishlist' %}">
                                         Sevimlilar
                                     </a>
                                     <a class="dropdown-item header_navbar_lang_menu_dropdown_item"
-                                       href="/profile/settings">
+                                       href="{% url 'profile' %}">
                                         Sozlamalar
                                     </a>
                                     <a class="dropdown-item fw-bold text-warning" href="/admin_page">

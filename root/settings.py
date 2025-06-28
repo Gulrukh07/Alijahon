@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     # my apps
     'apps',
-    'authenticate'
+    'authenticate',
+    # third part apps
+    'ckeditor',
+    'ckeditor_uploader',
 
 ]
 USE_L10N = True
@@ -136,6 +139,9 @@ STATIC_ROOT = join(BASE_DIR / 'static')
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = join(BASE_DIR / 'media')
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

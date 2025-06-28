@@ -55,6 +55,8 @@ def set_language(request):
 urlpatterns = [
     path("setlang/", set_language, name="set_language"),
     path('admin/', admin.site.urls),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
+
 ]
 
 

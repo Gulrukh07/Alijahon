@@ -1,13 +1,16 @@
+from datetime import datetime, timedelta
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
-from django.db.models.aggregates import Count
+from django.db.models import Q, Sum, Count
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.views.generic import TemplateView, ListView, CreateView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, DetailView
 
-from apps.forms import OrderForm
-from apps.models import Category, Product, Order, WishList
+from apps.forms import OrderForm, ThreadModelForm
+from apps.models import Category, Product, Order, WishList, Thread, SiteStatics
+from authenticate.models import User
 
 
 # Create your views here.
@@ -21,7 +24,6 @@ class HomeListView(ListView):
         data = super().get_context_data(*args, **kwargs)
         data['products'] = Product.objects.all()
         return data
-
 
 class ProductListView(ListView):
     queryset = Product.objects.all()
@@ -41,19 +43,22 @@ class ProductListView(ListView):
         data['c_slug'] = self.request.GET.get('category_slug')
         return data
 
-
-class OqimTemplateView(TemplateView):
-    template_name = 'apps/oqim.html'
+class CategoryListView(ListView):
+    queryset = Category.objects.all()
+    template_name = 'apps/product-list.html'
+    context_object_name = 'categories'
 
 class MarketListView(ListView):
-    template_name = 'apps/market.html'
+    template_name = 'apps/market/market.html'
     queryset = Product.objects.all()
     context_object_name = 'products'
 
     def get_queryset(self):
         category_slug =self.request.GET.get('category_slug')
         query = super().get_queryset()
-        if category_slug:
+        if category_slug == 'top':
+            query = query.annotate(order_count=Count('orders')).order_by('-order_count')
+        elif category_slug:
             query = query.filter(category__slug=category_slug)
         return query
 
@@ -63,9 +68,8 @@ class MarketListView(ListView):
         data['c_slug'] = self.request.GET.get('category_slug')
         return data
 
-
-class OrderCreateView(CreateView):
-    template_name = 'apps/order-form.html'
+class OrderCreateView(LoginRequiredMixin,CreateView):
+    template_name = 'apps/order/order-form.html'
     queryset = Order.objects.all()
     context_object_name = 'order'
     form_class = OrderForm
@@ -78,25 +82,24 @@ class OrderCreateView(CreateView):
 
     def form_valid(self, form):
         order = form.save(commit=False)
-        order['customer'] = self.request.user
-        order = order.save()
-        return render(self.request, 'apps/order-receive.html', {'order': order})
+        order.customer = self.request.user
+        order.save()
+        site = SiteStatics.objects.first()
+        return render(self.request, 'apps/order/order-receive.html', {'order': order, 'site': site})
 
     def form_invalid(self, form):
         for message in form.errors.values():
             messages.error(self.request, message)
         return super().form_invalid(form)
 
-
 class OrderListView(ListView):
-    template_name = 'apps/order-list.html'
+    template_name = 'apps/order/order-list.html'
     queryset = Order.objects.all()
     context_object_name = 'orders'
 
     def get_queryset(self):
         query = super().get_queryset().filter(customer=self.request.user)
         return query
-
 
 class SearchListView(ListView):
     queryset = Product.objects.all()
@@ -134,5 +137,136 @@ class WishListView(LoginRequiredMixin,ListView):
         data['total'] = WishList.objects.filter(user=self.request.user).aggregate(total=Count('id') )['total']
         return data
 
+class ThreadCreateView(CreateView):
+    queryset = Thread.objects.all()
+    template_name = 'apps/market/market.html'
+    form_class = ThreadModelForm
+    success_url = reverse_lazy("thread-list")
 
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data( **kwargs)
+        data['products'] = Product.objects.all()
+        data['categories'] = Category.objects.all()
+        return data
 
+    def form_valid(self, form):
+        thread = form.save(commit=False)
+        thread.owner = self.request.user
+        thread.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        for message in form.errors.values():
+            messages.error(self.request, message)
+        return super().form_invalid(form)
+
+class ThreadListView(ListView):
+    queryset = Thread.objects.all().order_by('-created')
+    template_name = 'apps/market/thread-list.html'
+    context_object_name = 'threads'
+
+    def get_queryset(self):
+        query = super().get_queryset().filter(owner=self.request.user)
+        return query
+
+class ThreadDetailView(DetailView):
+    queryset = Thread.objects.all()
+    pk_url_kwarg = 'pk'
+    template_name = 'apps/order/order-form.html'
+    context_object_name = 'thread'
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        thread = data.get('thread')
+        thread.visit_count += 1
+        thread.save()
+        data['product'] = self.object.product
+        return data
+
+class StatisticsListView(ListView):
+    queryset = Thread.objects.all()
+    template_name = 'apps/market/statistics.html'
+    context_object_name = 'threads'
+
+    def get_queryset(self):
+        period = self.request.GET.get('period')
+
+        now = datetime.now()
+        today_start = datetime(now.year, now.month, now.day, 0, 0, 0)
+        today_end = datetime(now.year, now.month, now.day, 23, 59, 59)
+
+        # Yesterday
+        yesterday_start = today_start - timedelta(days=1)
+        yesterday_end = today_end - timedelta(days=1)
+
+        # Weekly
+        week_start = today_start - timedelta(days=6)  # Including today, so 7 days total
+        week_end = today_end
+
+        # Monthly (30 kunlik)
+        month_start = today_start - timedelta(days=29)
+        month_end = today_end
+
+        # All time
+        all_start = datetime(2000, 1, 1, 0, 0, 0)
+        all_end = today_end
+
+        datetime_map = {
+            "today": [today_start, today_end],
+            "last_day": [yesterday_start, yesterday_end],
+            "weekly": [week_start, week_end],
+            "monthly": [month_start, month_end],
+            "all": [all_start, all_end],
+        }
+        time_filter = datetime_map.get(period)
+        query = super().get_queryset().filter(owner=self.request.user).filter(orders__updated__range=time_filter).annotate(
+            new_count=Count('orders', filter=Q(orders__status=Order.OrderStatus.NEW)),
+            ready_count=Count('orders', filter=Q(orders__status=Order.OrderStatus.READY_TO_DELIVERY)),
+            delivering_count=Count('orders', filter=Q(orders__status=Order.OrderStatus.DELIVERING)),
+            delivered_count=Count('orders', filter=Q(orders__status=Order.OrderStatus.DELIVERED)),
+            not_count=Count('orders', filter=Q(orders__status=Order.OrderStatus.NOT_CONNECTED)),
+            canceled_count=Count('orders', filter=Q(orders__status=Order.OrderStatus.CANCELED)),
+            archived_count=Count('orders', filter=Q(orders__status=Order.OrderStatus.ARCHIVED)),
+        ).values('name',
+                 'product__title',
+                 'visit_count',
+                'new_count',
+                'ready_count',
+                'delivering_count',
+                'delivered_count',
+                'not_count',
+                'canceled_count',
+                'archived_count',
+        )
+        return query.distinct()
+
+    def get_context_data(self, **kwargs):
+        tmp = self.get_queryset().aggregate(
+            total_visits=Sum('visit_count'),
+            new_total=Sum('new_count'),
+            ready_total=Sum('ready_count'),
+            delivering_total=Sum('delivering_count'),
+            delivered_total=Sum('delivered_count'),
+            not_total=Sum('not_count'),
+            canceled_total=Sum('canceled_count'),
+            archived_total=Sum('archived_count'),
+        )
+        data = super().get_context_data()
+        data.update(tmp)
+        return data
+
+class GiveAwayListView(ListView):
+    queryset = User.objects.all()
+    template_name = 'apps/market/giveaway.html'
+    context_object_name = 'sellers'
+
+    def get_queryset(self):
+        query = (super().get_queryset().annotate(order_count=Count(
+            "threads__orders",filter=Q(threads__orders__status=Order.OrderStatus.DELIVERED))).
+                 filter(order_count__gte = 1)).values('order_count', 'first_name', 'last_name')
+        return query
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['site'] = SiteStatics.objects.first()
+        return data

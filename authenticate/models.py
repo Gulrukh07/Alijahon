@@ -57,11 +57,6 @@ class District(Model):
     region = ForeignKey("authenticate.Region", CASCADE, related_name="districts")
 
 class User(AbstractUser):
-    class RoleType(TextChoices):
-        SELLER = 'seller' , "Seller"
-        OPERATOR = 'operator' , "Operator"
-        ADMIN = 'admin' , "Admin"
-        DELIVER = 'deliver' , "Deliver"
     phone_number = CharField(max_length=15, unique=True)
     objects = CustomUserManager()
     username = None
@@ -74,7 +69,10 @@ class User(AbstractUser):
     telegram_id = CharField(max_length=30, blank=True, null=True)
     about = TextField(blank=True, null=True)
     balance = DecimalField(max_digits=10 , decimal_places=0 , default=0)
-    role = CharField(max_length=50 , choices=RoleType , default=RoleType.SELLER)
+
+    @property
+    def full_name(self):
+        return self.first_name + " " + self.last_name
 
     @property
     def wishlist_products(self):

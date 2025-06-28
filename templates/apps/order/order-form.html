@@ -6,7 +6,7 @@
         <div class="card-body">
             <div class="col-lg-8 swiper-container">
 
-                <form method="post">
+                <form method="post" action="{% url 'order-form' product.pk %}">
                     {% csrf_token %}
                     <div class="mb-2">
                         <label class="form-label" for="formGroupNameInput">{% trans 'Name' %}</label>
@@ -16,11 +16,12 @@
                         <label class="form-label" for="formGroupEmailInput">{%  trans 'Phone number' %}:</label>
                         <input class="form-control" id="phone-mask" required="" name="phone_number" type="text">
                     </div>
-                    <input class="hidden" hidden="hidden" id="phone-mask" required="" name="product"  value="{{ product.pk }}" type="text">
+                    <input class="hidden" hidden="hidden" required="" name="product"  value="{{ product.pk }}" type="text">
+                    {% if thread %}
+                        <input class="hidden" hidden="hidden" name="thread"  value="{{ thread.pk }}">
+                    {% endif %}
 
                     <span style="padding-bottom: 100px;">
-
-
 
                 </span>
                     <div class="d-grid gap-2 col-6 mx-auto" style="margin-top: 20px;">
@@ -47,21 +48,17 @@
                     {{ product.title }}
                 </h5>
                 <p class="fs--1">
-                </p><p>
-            </p>
+                </p>
                 <h4 class="d-flex align-items-center">
                 <span class="text-warning me-2">
-                {{ product.price | intcomma}} so'm
+                    {% if thread %}
+                        {{ thread.discount_amount | intcomma}} so'm
+                        {% else %}
+                        {{ product.price | intcomma}} so'm
+                    {% endif %}
                 </span>
-
-
-
-
-
-
-
-
                 </h4>
+            <div>{{ product.description|safe }}</div>
             </div>
         </div>
     </div>

@@ -1,0 +1,292 @@
+{% extends 'apps/base/base-page.html' %}
+{% block body %}
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-color: #48bb78;
+            --warning-color: #ed8936;
+            --danger-color: #f56565;
+            --info-color: #4299e1;
+            --dark-color: #2d3748;
+            --light-bg: #f7fafc;
+            --card-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        .modern-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            border: none;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .modern-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+        }
+
+        .modern-container {
+            padding: 2rem;
+            background: var(--light-bg);
+            min-height: 100vh;
+        }
+
+        .header-section {
+            background: var(--primary-gradient);
+            padding: 2rem;
+            margin: -2rem -2rem 2rem -2rem;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .tab-menu {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 0;
+        }
+
+        .modern-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+        }
+
+        .modern-btn:hover,
+        .modern-btn:focus {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+            transform: translateY(-2px);
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-table {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: none;
+            margin: 0;
+        }
+
+        .stats-table thead th {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            padding: 1.25rem 1rem;
+            border: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-table tbody td,
+        .stats-table tbody th {
+            padding: 1rem;
+            border: none;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+            font-size: 0.95rem;
+        }
+
+        .stats-table tbody tr {
+            transition: var(--transition);
+        }
+
+        .stats-table tbody tr:hover {
+            background: #f8fafc;
+            transform: scale(1.01);
+        }
+
+        .total-row {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+            color: white !important;
+            font-weight: 700;
+        }
+
+        .total-row td,
+        .total-row th {
+            border-bottom: none !important;
+            padding: 1.25rem 1rem;
+        }
+
+        .total-row:hover {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%) !important;
+            transform: none;
+        }
+
+        .stat-number {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .thread-name {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .product-name {
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+
+        .table-container {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+
+        @media (max-width: 768px) {
+            .modern-container {
+                padding: 1rem;
+            }
+
+            .header-section {
+                padding: 1.5rem;
+                margin: -1rem -1rem 1.5rem -1rem;
+            }
+
+            .tab-menu {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .modern-btn {
+                width: 100%;
+                max-width: 200px;
+                text-align: center;
+            }
+
+            .stats-table {
+                font-size: 0.8rem;
+            }
+
+            .stats-table thead th,
+            .stats-table tbody td,
+            .stats-table tbody th {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stats-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            opacity: 0.8;
+        }
+    </style>
+
+    <div class="modern-container">
+        <div class="modern-card fade-in">
+            <div class="header-section">
+                <div class="tab-menu">
+                    <a href="{% url 'thread-statistics' %}?period=today" class="modern-btn">
+                        📅 Bugun
+                    </a>
+                    <a href="{% url 'thread-statistics' %}?period=last_day" class="modern-btn">
+                        🕐 Kechagi
+                    </a>
+                    <a href="{% url 'thread-statistics' %}?period=weekly" class="modern-btn">
+                        📊 Haftalik
+                    </a>
+                    <a href="{% url 'thread-statistics' %}?period=monthly" class="modern-btn">
+                        📈 Oylik
+                    </a>
+                    <a href="{% url 'thread-statistics' %}?period=all" class="modern-btn">
+                        🌐 Hammasi
+                    </a>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="table stats-table">
+                    <thead class="text-center">
+                    <tr>
+                        <th scope="col">🔗 Oqim</th>
+                        <th scope="col">📦 Mahsulot</th>
+                        <th scope="col">👁️ Tashrif</th>
+                        <th scope="col">🆕 Yangi</th>
+                        <th scope="col">📋 Dastavkaga tayyor</th>
+                        <th scope="col">🚚 Yetkazilmoqda</th>
+                        <th scope="col">✅ Yetqazib berildi</th>
+                        <th scope="col">📞 Telefon ko'tarmadi</th>
+                        <th scope="col">❌ Bekor qilindi</th>
+                        <th scope="col">📂 Arxivlandi</th>
+                    </tr>
+                    <tr class="total-row">
+                        <td>📊 JAMI</td>
+                        <td></td>
+                        <td class="stat-number">{{ total_visits }}</td>
+                        <td class="stat-number">{{ new_total }}</td>
+                        <td class="stat-number">{{ ready_total }}</td>
+                        <td class="stat-number">{{ delivering_total }}</td>
+                        <td class="stat-number">{{ delivered_total }}</td>
+                        <td class="stat-number">{{ not_total }}</td>
+                        <td class="stat-number">{{ canceled_total }}</td>
+                        <td class="stat-number">{{ archived_total }}</td>
+                    </tr>
+                    </thead>
+
+                    <tbody class="text-center">
+                    {% for thread in threads %}
+                        <tr class="fade-in">
+                            <th class="thread-name">{{ thread.name }}</th>
+                            <th class="product-name">{{ thread.product__title }}</th>
+                            <td class="stat-number">{{ thread.visit_count }}</td>
+                            <td class="stat-number">{{ thread.new_count }}</td>
+                            <td class="stat-number">{{ thread.ready_count }}</td>
+                            <td class="stat-number">{{ thread.delivering_count }}</td>
+                            <td class="stat-number">{{ thread.delivered_count }}</td>
+                            <td class="stat-number">{{ thread.not_count }}</td>
+                            <td class="stat-number">{{ thread.canceled_count }}</td>
+                            <td class="stat-number">{{ thread.archived_count }}</td>
+                        </tr>
+                    {% endfor %}
+
+                    <tr class="total-row">
+                        <td>📊 JAMI</td>
+                        <td></td>
+                        <td class="stat-number">{{ total_visits }}</td>
+                        <td class="stat-number">{{ new_total }}</td>
+                        <td class="stat-number">{{ ready_total }}</td>
+                        <td class="stat-number">{{ delivering_total }}</td>
+                        <td class="stat-number">{{ delivered_total }}</td>
+                        <td class="stat-number">{{ not_total }}</td>
+                        <td class="stat-number">{{ canceled_total }}</td>
+                        <td class="stat-number">{{ archived_total }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

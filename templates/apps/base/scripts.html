@@ -80,3 +80,14 @@
 </script>
 
 
+{# --------------------  copy -------------------------- #}
+<script>
+    $(".card-body .copy_ref_bn").on('click', function () {
+        var copyText = $(this).parent().find('.ref_link').get(0);
+
+        copyText.select();
+        document.execCommand("copy");
+        $(this).text('Nusxa olindi');
+    });
+</script>
+

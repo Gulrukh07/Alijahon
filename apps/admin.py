@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.models import Category, Product
+from apps.models import Category, Product, Order, SiteStatics
 
 
 # Register your models here.
@@ -10,5 +10,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(SiteStatics)
+class SiteStatics(admin.ModelAdmin):
     pass
 
