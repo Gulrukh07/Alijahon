@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.translation import gettext as _
 
-from apps.models import Order, SiteStatics, Thread, Product
+from apps.models import Order, SiteStatics, Thread, Product, Withdrawal
 
 
 class OrderForm(ModelForm):
@@ -25,8 +25,6 @@ class OrderForm(ModelForm):
             total_price -= thread.discount
         return total_price
 
-
-
 class ThreadModelForm(ModelForm):
     class Meta:
         model = Thread
@@ -42,4 +40,22 @@ class ThreadModelForm(ModelForm):
             raise ValidationError(_("Discount exceeded the limit"))
         return discount
 
+class WithdrawalModelForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(ModelForm, self).__init__(*args, **kwargs)
+        self.fields['user'].required = False
+
+    class Meta:
+        model = Withdrawal
+        fields = "card_number", "amount", 'user'
+
+    def clean_user(self):
+        return self.user
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount')
+        user = self.user
+        if amount > user.balance:
+            raise ValidationError(_("You don't have enough money"))
+        return amount
 

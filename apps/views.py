@@ -8,9 +8,9 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView
 
-from apps.forms import OrderForm, ThreadModelForm
-from apps.models import Category, Product, Order, WishList, Thread, SiteStatics
-from authenticate.models import User
+from apps.forms import OrderForm, ThreadModelForm, WithdrawalModelForm
+from apps.models import Category, Product, Order, WishList, Thread, SiteStatics, Withdrawal
+from authenticate.models import User, Region
 
 
 # Create your views here.
@@ -270,3 +270,70 @@ class GiveAwayListView(ListView):
         data = super().get_context_data(**kwargs)
         data['site'] = SiteStatics.objects.first()
         return data
+
+class WithdrawalCreateView(LoginRequiredMixin,CreateView):
+    queryset = Withdrawal.objects.all()
+    form_class = WithdrawalModelForm
+    template_name = 'apps/withdraw/withdraw-form.html'
+    success_url = reverse_lazy('withdraw-form')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    def form_valid(self, form):
+        user = self.request.user
+        user.balance -= form.instance.amount
+        user.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        for error in form.errors.values():
+            messages.error(self.request, error)
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        data = super().get_form_kwargs()
+        data['withdraws'] = Withdrawal.objects.filter(user=self.request.user)
+        return data
+
+class OperatorOrderListView(ListView):
+    queryset = Order.objects.all()
+    template_name = 'apps/operator/operator-page.html'
+    context_object_name = 'orders'
+
+    def post(self, request):
+        category_id = request.POST.get('category_id')
+        district_id = request.POST.get('district_id')
+        query = self.get_queryset()
+        if category_id:
+            query = query.filter(product__category__id=category_id)
+        if district_id:
+            query = query.filter(district_id=district_id)
+        context = {
+            "status": Order.OrderStatus.values,
+            "categories":Category.objects.all(),
+            "orders": query
+        }
+        return render(request , 'apps/operator/operator-page.html' , context)
+
+    def get_queryset(self):
+        status = self.request.GET.get('status')
+        query = super().get_queryset()
+        Order.objects.filter(operator=self.request.user).update(hold=False)
+
+        if status != 'new':
+            query = query.filter(operator = self.request.user, status = status)
+        else:
+            query = query.filter(status = status)
+        return query
+
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['status'] = Order.OrderStatus.values
+        data['regions'] = Region.objects.all()
+        data['categories'] = Category.objects.all()
+        return data
+
+

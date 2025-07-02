@@ -10,7 +10,7 @@ loaddata:
 
 
 dumpdata:
-	python3 manage.py dumpdata apps.Category > category.json
+	python3 manage.py dumpdata apps.Product > product.json
 
 translate:
 	django-admin makemessages -l uz

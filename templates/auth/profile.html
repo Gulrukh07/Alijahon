@@ -28,11 +28,10 @@
 
                             {%  trans 'Region' %}
                             <select name="region" class="form-control" id="id_region">
-                                <option value="{% trans 'Choose the region' %}"{% if not user.district %} selected{% endif %}>
+                                <option value="{% trans 'Choose the region' %}" {% if not request.user.district %} selected{% endif %}>
                                     {% trans 'Choose the region' %}</option>
                                 {% for region in regions %}
-                                    <option value="{{ region.pk }}
-                                        {% if user.pk == region.pk %} selected{% endif %}">{{ region.name }}</option>
+                                    <option value="{{ region.pk }}" {% if request.user.district.region.pk == region.pk %} selected{% endif %}>{{ region.name }}</option>
 
                                 {% endfor %}
 

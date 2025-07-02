@@ -57,6 +57,11 @@ class District(Model):
     region = ForeignKey("authenticate.Region", CASCADE, related_name="districts")
 
 class User(AbstractUser):
+    class UserRoles(TextChoices):
+        OPERATOR = 'operator', "Operator"
+        ADMIN = 'admin', "Admin"
+        USER = 'user', "User"
+        DELIVERER = 'deliverer', "Deliverer"
     phone_number = CharField(max_length=15, unique=True)
     objects = CustomUserManager()
     username = None
@@ -69,6 +74,7 @@ class User(AbstractUser):
     telegram_id = CharField(max_length=30, blank=True, null=True)
     about = TextField(blank=True, null=True)
     balance = DecimalField(max_digits=10 , decimal_places=0 , default=0)
+    role = TextField(choices=UserRoles.choices, default=UserRoles.USER)
 
     @property
     def full_name(self):

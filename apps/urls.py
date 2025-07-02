@@ -2,7 +2,7 @@ from django.urls import path
 
 from apps.views import HomeListView, ProductListView, MarketListView, OrderCreateView, OrderListView, \
     SearchListView, wishlist_view, WishListView, ThreadCreateView, ThreadListView, ThreadDetailView, StatisticsListView, \
-    CategoryListView, GiveAwayListView
+    CategoryListView, GiveAwayListView, WithdrawalCreateView, OperatorOrderListView
 
 urlpatterns = [
     path('', HomeListView.as_view(), name='home'),
@@ -29,4 +29,13 @@ urlpatterns += [
     path('thread-form', ThreadCreateView.as_view(), name='thread-form'),
     path('thread-detail/<int:pk>', ThreadDetailView.as_view(), name='thread-detail'),
     path('thread-statistics', StatisticsListView.as_view(), name='thread-statistics'),
+]
+#--------------------------- withdraw  ----------------------------------
+urlpatterns += [
+    path('withdraw/', WithdrawalCreateView.as_view(), name='withdraw-form'),
+]
+
+#--------------------------- operator  ----------------------------------
+urlpatterns += [
+    path('operator-page/', OperatorOrderListView.as_view(), name='operator-page'),
 ]

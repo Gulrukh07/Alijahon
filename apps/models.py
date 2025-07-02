@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models import Model, URLField, CASCADE, ForeignKey, ImageField, SET_NULL
 from django.db.models.enums import TextChoices
 from django.db.models.fields import CharField, DecimalField, IntegerField, TextField, DateTimeField, SlugField, \
-    DateField
+    DateField, BooleanField
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
@@ -63,6 +63,10 @@ class Order(Model):
     comment = TextField(null=True, blank=True)
     thread = ForeignKey('apps.Thread', on_delete=SET_NULL, null=True, blank=True, related_name='orders')
     updated = DateTimeField(auto_now=True, null=True, blank=True)
+    operator = ForeignKey('authenticate.User', on_delete=SET_NULL, null=True, blank=True, related_name='operator_orders')
+    deliver = ForeignKey('authenticate.User', on_delete=SET_NULL, null=True, blank=True, related_name='deliver_orders')
+    delivered_date = DateTimeField(null=True, blank=True)
+    hold = BooleanField(default=False)
 
     def __str__(self):
         return self.fullname
@@ -73,7 +77,6 @@ class WishList(Model):
 
     class Meta:
         unique_together = 'user', 'product'
-
 
 class Thread(Model):
     owner = ForeignKey('authenticate.User', on_delete=CASCADE, related_name='threads')
@@ -93,3 +96,17 @@ class SiteStatics(Model):
     giveaway_start_time = DateField(null=True, blank=True)
     giveaway_end_time = DateField(null=True, blank=True)
     giveaway_description = RichTextUploadingField(null=True, blank=True)
+
+class Withdrawal(Model):
+    class WithdrawalStatus(TextChoices):
+        UNDER_REVIEW = _('under review'), _('Under review'),
+        COMPLETED = _('completed'), _('Completed'),
+        CANCELED = _('canceled'), _('Canceled'),
+
+    user = ForeignKey('authenticate.User', SET_NULL, null=True, blank=True, related_name='withdrawals')
+    amount = DecimalField(decimal_places=0, max_digits=10)
+    card_number = CharField(max_length=255)
+    withdraw_date = DateField(auto_now_add=True)
+    status = CharField(max_length=20, choices=WithdrawalStatus.choices, default=WithdrawalStatus.UNDER_REVIEW)
+    pay_check = ImageField(upload_to='withdrawals/%Y/%m/%d', null=True, blank=True)
+    comment = TextField(null=True, blank=True)
