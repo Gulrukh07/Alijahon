@@ -6,6 +6,7 @@ from django.forms import ModelForm
 from django.utils.translation import gettext as _
 
 from apps.models import Order, SiteStatics, Thread, Product, Withdrawal
+from authenticate.models import User
 
 
 class OrderForm(ModelForm):
@@ -73,17 +74,22 @@ class WithdrawalModelForm(ModelForm):
 class OrderUpdateModelForm(ModelForm):
     def __init__(self, *args, **kwargs):
         self.order = kwargs.pop('order', None)
-        self.operator = kwargs.pop('operator', None)
+        self.employee = kwargs.pop('employee', None)
         super(ModelForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required = False
 
     class Meta:
         model = Order
-        fields = 'quantity' , 'delivered_date' , 'status' , 'comment' , 'district' , 'operator'
+        fields = 'quantity' , 'delivered_date' , 'status' , 'comment' , 'district' , 'operator', 'deliver'
 
     def clean_operator(self):
-        return self.operator
+        if self.employee.role == User.UserRoles.OPERATOR:
+            return self.employee
+
+    def clean_deliver(self):
+        if self.employee.role == User.UserRoles.DELIVERER:
+            return self.employee
 
     def clean_quantity(self):
         quantity = self.cleaned_data.get('quantity')

@@ -355,6 +355,8 @@ class OperatorOrderListView(ListView):
         data['status'] = Order.OrderStatus.values
         data['regions'] = Region.objects.all()
         data['categories'] = Category.objects.all()
+        data['deliver_status'] = [Order.OrderStatus.CANCELED, Order.OrderStatus.DELIVERING, Order.OrderStatus.READY_TO_DELIVERY]
+        data['operator_status'] = [Order.OrderStatus.NEW, Order.OrderStatus.CANCELED, Order.OrderStatus.DELIVERED, Order.OrderStatus.DELIVERING,Order.OrderStatus.NOT_CONNECTED, Order.OrderStatus.READY_TO_DELIVERY]
         category_id = self.request.GET.get('category_id')
         district_id = self.request.GET.get('district_id')
         if category_id:
@@ -380,7 +382,7 @@ class OrderUpdateView(LoginRequiredMixin, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['order'] = self.object
-        kwargs['operator'] = self.request.user
+        kwargs['employee'] = self.request.user
 
         return kwargs
 
@@ -394,7 +396,7 @@ class OrderUpdateView(LoginRequiredMixin, UpdateView):
         obj = self.get_object(self.queryset)
         if obj.thread and status == Order.OrderStatus.DELIVERED.value:
             seller = obj.thread.owner
-            seller.balance += (obj.product.seller_price - obj.thread.discount_price) * obj.quantity
+            seller.balance += (obj.product.seller_price - obj.thread.discount_amount) * obj.quantity
             seller.save()
         return super().form_valid(form)
 
