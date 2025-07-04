@@ -1,3 +1,6 @@
+import datetime
+import re
+
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.translation import gettext as _
@@ -55,7 +58,56 @@ class WithdrawalModelForm(ModelForm):
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
         user = self.user
+        if amount <= 0:
+            raise ValidationError(_("Amount cannot be negative"))
         if amount > user.balance:
             raise ValidationError(_("You don't have enough money"))
         return amount
+
+    def clean_card_number(self):
+        card_number = self.cleaned_data.get('card_number')
+        pattern = r'^[1-9][0-9]{10}$'
+        card_number = re.sub(pattern, '', card_number)
+        return card_number
+
+class OrderUpdateModelForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.order = kwargs.pop('order', None)
+        self.operator = kwargs.pop('operator', None)
+        super(ModelForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.required = False
+
+    class Meta:
+        model = Order
+        fields = 'quantity' , 'delivered_date' , 'status' , 'comment' , 'district' , 'operator'
+
+    def clean_operator(self):
+        return self.operator
+
+    def clean_quantity(self):
+        quantity = self.cleaned_data.get('quantity')
+        site = SiteStatics.objects.first()
+        order = self.order
+
+
+        if quantity > order.product.quantity:
+            raise ValidationError(_("The product quantity cannot be greater than the product quantity"))
+        if quantity <= 0:
+            raise ValidationError(_("The product quantity cannot be negative"))
+        if order.thread:
+            order.total = order.thread.discount_amount * quantity + site.delivery_price
+        else:
+            order.total = order.product.price * quantity + site.delivery_price
+        order.save()
+        return quantity
+
+    def clean_delivered_date(self):
+        delivered_date = self.cleaned_data.get('delivered_date')
+        now = datetime.date.today()
+        if delivered_date and delivered_date < now:
+            raise ValidationError(_("The delivered date cannot be less than the current date"))
+        return delivered_date
+
+
 

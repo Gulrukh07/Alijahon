@@ -8,7 +8,7 @@ from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
 
-# Create your models here.
+# Create your models here.t
 
 class Category(Model):
     image = URLField()
@@ -65,8 +65,9 @@ class Order(Model):
     updated = DateTimeField(auto_now=True, null=True, blank=True)
     operator = ForeignKey('authenticate.User', on_delete=SET_NULL, null=True, blank=True, related_name='operator_orders')
     deliver = ForeignKey('authenticate.User', on_delete=SET_NULL, null=True, blank=True, related_name='deliver_orders')
-    delivered_date = DateTimeField(null=True, blank=True)
+    delivered_date = DateField(null=True, blank=True)
     hold = BooleanField(default=False)
+    district = ForeignKey('authenticate.District', on_delete=SET_NULL, null=True, blank=True, related_name='orders')
 
     def __str__(self):
         return self.fullname

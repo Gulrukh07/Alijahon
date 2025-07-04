@@ -2,7 +2,8 @@ from django.urls import path
 
 from apps.views import HomeListView, ProductListView, MarketListView, OrderCreateView, OrderListView, \
     SearchListView, wishlist_view, WishListView, ThreadCreateView, ThreadListView, ThreadDetailView, StatisticsListView, \
-    CategoryListView, GiveAwayListView, WithdrawalCreateView, OperatorOrderListView
+    CategoryListView, GiveAwayListView, WithdrawalCreateView, OperatorOrderListView, OrderUpdateView, \
+    diagram_statistic_view, DiagramTemplateView
 
 urlpatterns = [
     path('', HomeListView.as_view(), name='home'),
@@ -38,4 +39,9 @@ urlpatterns += [
 #--------------------------- operator  ----------------------------------
 urlpatterns += [
     path('operator-page/', OperatorOrderListView.as_view(), name='operator-page'),
+    path('order-update/<int:pk>', OrderUpdateView.as_view(), name='order-update'),
+]
+urlpatterns += [
+    path('diagram/', DiagramTemplateView.as_view(), name='diagram'),
+    path('diagram-statistic', diagram_statistic_view, name='diagram-statistic'),
 ]

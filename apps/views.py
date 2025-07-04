@@ -6,9 +6,9 @@ from django.db.models import Q, Sum, Count
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, DetailView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, TemplateView
 
-from apps.forms import OrderForm, ThreadModelForm, WithdrawalModelForm
+from apps.forms import OrderForm, ThreadModelForm, WithdrawalModelForm, OrderUpdateModelForm
 from apps.models import Category, Product, Order, WishList, Thread, SiteStatics, Withdrawal
 from authenticate.models import User, Region
 
@@ -25,13 +25,14 @@ class HomeListView(ListView):
         data['products'] = Product.objects.all()
         return data
 
+
 class ProductListView(ListView):
     queryset = Product.objects.all()
     template_name = 'apps/product-list.html'
     context_object_name = 'products'
 
     def get_queryset(self):
-        category_slug =self.request.GET.get('category_slug')
+        category_slug = self.request.GET.get('category_slug')
         query = super().get_queryset()
         if category_slug:
             query = query.filter(category=Category.objects.get(slug=category_slug))
@@ -43,10 +44,12 @@ class ProductListView(ListView):
         data['c_slug'] = self.request.GET.get('category_slug')
         return data
 
+
 class CategoryListView(ListView):
     queryset = Category.objects.all()
     template_name = 'apps/product-list.html'
     context_object_name = 'categories'
+
 
 class MarketListView(ListView):
     template_name = 'apps/market/market.html'
@@ -54,7 +57,7 @@ class MarketListView(ListView):
     context_object_name = 'products'
 
     def get_queryset(self):
-        category_slug =self.request.GET.get('category_slug')
+        category_slug = self.request.GET.get('category_slug')
         query = super().get_queryset()
         if category_slug == 'top':
             query = query.annotate(order_count=Count('orders')).order_by('-order_count')
@@ -68,7 +71,8 @@ class MarketListView(ListView):
         data['c_slug'] = self.request.GET.get('category_slug')
         return data
 
-class OrderCreateView(LoginRequiredMixin,CreateView):
+
+class OrderCreateView(LoginRequiredMixin, CreateView):
     template_name = 'apps/order/order-form.html'
     queryset = Order.objects.all()
     context_object_name = 'order'
@@ -92,6 +96,7 @@ class OrderCreateView(LoginRequiredMixin,CreateView):
             messages.error(self.request, message)
         return super().form_invalid(form)
 
+
 class OrderListView(ListView):
     template_name = 'apps/order/order-list.html'
     queryset = Order.objects.all()
@@ -100,6 +105,7 @@ class OrderListView(ListView):
     def get_queryset(self):
         query = super().get_queryset().filter(customer=self.request.user)
         return query
+
 
 class SearchListView(ListView):
     queryset = Product.objects.all()
@@ -113,18 +119,20 @@ class SearchListView(ListView):
                                               Q(category__name__icontains=search))
         return query.distinct()
 
+
 def wishlist_view(request, pk):
-    query = WishList.objects.filter(product_id=pk, user = request.user)
+    query = WishList.objects.filter(product_id=pk, user=request.user)
     liked = False
     if not query.exists():
         liked = True
-        WishList.objects.create(product_id=pk, user = request.user)
+        WishList.objects.create(product_id=pk, user=request.user)
     else:
         liked = False
         query.delete()
     return JsonResponse({'liked': liked})
 
-class WishListView(LoginRequiredMixin,ListView):
+
+class WishListView(LoginRequiredMixin, ListView):
     queryset = WishList.objects.all()
     context_object_name = 'wishlists'
     template_name = 'apps/wishlist.html'
@@ -134,8 +142,9 @@ class WishListView(LoginRequiredMixin,ListView):
 
     def get_context_data(self, *args, **kwargs):
         data = super().get_context_data(*args, **kwargs)
-        data['total'] = WishList.objects.filter(user=self.request.user).aggregate(total=Count('id') )['total']
+        data['total'] = WishList.objects.filter(user=self.request.user).aggregate(total=Count('id'))['total']
         return data
+
 
 class ThreadCreateView(CreateView):
     queryset = Thread.objects.all()
@@ -144,7 +153,7 @@ class ThreadCreateView(CreateView):
     success_url = reverse_lazy("thread-list")
 
     def get_context_data(self, **kwargs):
-        data = super().get_context_data( **kwargs)
+        data = super().get_context_data(**kwargs)
         data['products'] = Product.objects.all()
         data['categories'] = Category.objects.all()
         return data
@@ -160,6 +169,7 @@ class ThreadCreateView(CreateView):
             messages.error(self.request, message)
         return super().form_invalid(form)
 
+
 class ThreadListView(ListView):
     queryset = Thread.objects.all().order_by('-created')
     template_name = 'apps/market/thread-list.html'
@@ -168,6 +178,7 @@ class ThreadListView(ListView):
     def get_queryset(self):
         query = super().get_queryset().filter(owner=self.request.user)
         return query
+
 
 class ThreadDetailView(DetailView):
     queryset = Thread.objects.all()
@@ -182,6 +193,7 @@ class ThreadDetailView(DetailView):
         thread.save()
         data['product'] = self.object.product
         return data
+
 
 class StatisticsListView(ListView):
     queryset = Thread.objects.all()
@@ -219,7 +231,8 @@ class StatisticsListView(ListView):
             "all": [all_start, all_end],
         }
         time_filter = datetime_map.get(period)
-        query = super().get_queryset().filter(owner=self.request.user).filter(orders__updated__range=time_filter).annotate(
+        query = super().get_queryset().filter(owner=self.request.user).filter(
+            orders__updated__range=time_filter).annotate(
             new_count=Count('orders', filter=Q(orders__status=Order.OrderStatus.NEW)),
             ready_count=Count('orders', filter=Q(orders__status=Order.OrderStatus.READY_TO_DELIVERY)),
             delivering_count=Count('orders', filter=Q(orders__status=Order.OrderStatus.DELIVERING)),
@@ -230,14 +243,14 @@ class StatisticsListView(ListView):
         ).values('name',
                  'product__title',
                  'visit_count',
-                'new_count',
-                'ready_count',
-                'delivering_count',
-                'delivered_count',
-                'not_count',
-                'canceled_count',
-                'archived_count',
-        )
+                 'new_count',
+                 'ready_count',
+                 'delivering_count',
+                 'delivered_count',
+                 'not_count',
+                 'canceled_count',
+                 'archived_count',
+                 )
         return query.distinct()
 
     def get_context_data(self, **kwargs):
@@ -255,6 +268,7 @@ class StatisticsListView(ListView):
         data.update(tmp)
         return data
 
+
 class GiveAwayListView(ListView):
     queryset = User.objects.all()
     template_name = 'apps/market/giveaway.html'
@@ -262,8 +276,8 @@ class GiveAwayListView(ListView):
 
     def get_queryset(self):
         query = (super().get_queryset().annotate(order_count=Count(
-            "threads__orders",filter=Q(threads__orders__status=Order.OrderStatus.DELIVERED))).
-                 filter(order_count__gte = 1)).values('order_count', 'first_name', 'last_name')
+            "threads__orders", filter=Q(threads__orders__status=Order.OrderStatus.DELIVERED))).
+                 filter(order_count__gte=1)).values('order_count', 'first_name', 'last_name')
         return query
 
     def get_context_data(self, **kwargs):
@@ -271,7 +285,8 @@ class GiveAwayListView(ListView):
         data['site'] = SiteStatics.objects.first()
         return data
 
-class WithdrawalCreateView(LoginRequiredMixin,CreateView):
+
+class WithdrawalCreateView(LoginRequiredMixin, CreateView):
     queryset = Withdrawal.objects.all()
     form_class = WithdrawalModelForm
     template_name = 'apps/withdraw/withdraw-form.html'
@@ -281,6 +296,7 @@ class WithdrawalCreateView(LoginRequiredMixin,CreateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
     def form_valid(self, form):
         user = self.request.user
         user.balance -= form.instance.amount
@@ -297,6 +313,7 @@ class WithdrawalCreateView(LoginRequiredMixin,CreateView):
         data['withdraws'] = Withdrawal.objects.filter(user=self.request.user)
         return data
 
+
 class OperatorOrderListView(ListView):
     queryset = Order.objects.all()
     template_name = 'apps/operator/operator-page.html'
@@ -312,28 +329,90 @@ class OperatorOrderListView(ListView):
             query = query.filter(district_id=district_id)
         context = {
             "status": Order.OrderStatus.values,
-            "categories":Category.objects.all(),
+            "categories": Category.objects.all(),
             "orders": query
         }
-        return render(request , 'apps/operator/operator-page.html' , context)
+        return render(request, 'apps/operator/operator-page.html', context)
 
     def get_queryset(self):
-        status = self.request.GET.get('status')
+        status = self.request.GET.get('status', 'new')
+        category_id = self.request.GET.get('category_id')
+        district_id = self.request.GET.get('district_id')
         query = super().get_queryset()
         Order.objects.filter(operator=self.request.user).update(hold=False)
-
+        if category_id:
+            query = Order.objects.filter(product__category__id=category_id)
+        if district_id:
+            query = Order.objects.filter(district_id=district_id)
         if status != 'new':
-            query = query.filter(operator = self.request.user, status = status)
+            query = query.filter(operator=self.request.user, status=status)
         else:
-            query = query.filter(status = status)
+            query = query.filter(status=status)
         return query
-
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data['status'] = Order.OrderStatus.values
         data['regions'] = Region.objects.all()
         data['categories'] = Category.objects.all()
+        category_id = self.request.GET.get('category_id')
+        district_id = self.request.GET.get('district_id')
+        if category_id:
+            data['category_id'] = int(category_id)
+        if district_id:
+            data['district_id'] = int(district_id)
         return data
 
 
+class OrderUpdateView(LoginRequiredMixin, UpdateView):
+    queryset = Order.objects.all()
+    template_name = 'apps/operator/order-change.html'
+    context_object_name = 'order'
+    form_class = OrderUpdateModelForm
+    pk_url_kwarg = 'pk'
+    success_url = reverse_lazy('operator-page')
+
+    def get(self, request, *args, **kwargs):
+        data = super().get(request, *args, **kwargs)
+        self.object.hold = True
+        return data
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['order'] = self.object
+        kwargs['operator'] = self.request.user
+
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['regions'] = Region.objects.all()
+        return data
+
+    def form_valid(self, form):
+        status = form.cleaned_data.get('status')
+        obj = self.get_object(self.queryset)
+        if obj.thread and status == Order.OrderStatus.DELIVERED.value:
+            seller = obj.thread.owner
+            seller.balance += (obj.product.seller_price - obj.thread.discount_price) * obj.quantity
+            seller.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        for error in form.errors.values():
+            messages.error(self.request, error)
+        return super().form_invalid(form)
+
+
+class DiagramTemplateView(TemplateView):
+    template_name = 'apps/diagram/diagram.html'
+
+
+def diagram_statistic_view(request):
+    query = list(Region.objects.annotate(order_count=Count('districts__orders')).values_list('name', 'order_count'))
+    res = list(zip(*query))
+    data = {
+        "regions": res[0],
+        "numbers": res[1]
+    }
+    return JsonResponse(data)

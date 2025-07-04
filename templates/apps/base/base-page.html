@@ -743,7 +743,7 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link active" href="/admin_page/diagrams" aria-expanded="false">
+                                        <a class="nav-link active" href="{% url 'diagram' %}" aria-expanded="false">
                                             <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Diagrammalar</span>
                                             </div>
                                         </a>
@@ -858,10 +858,16 @@
                                     </a>
                                     {% if request.user.role == 'operator' %}
                                         <a class="dropdown-item header_navbar_lang_menu_dropdown_item"
-                                           href="{% url 'operator-page' %}?status={{ request.GET.status }}">
+                                           href="{% url 'operator-page' %}">
                                             Operator
                                         </a>
                                     {% endif %} 
+                                    {% if request.user.role == 'deliver' %}
+                                        <a class="dropdown-item header_navbar_lang_menu_dropdown_item"
+                                           href="{% url 'operator-page' %}">
+                                            Deliver
+                                        </a>
+                                    {% endif %}
 
 
                                     <a class="dropdown-item header_navbar_lang_menu_dropdown_item"
