@@ -1,0 +1,472 @@
+{% extends 'apps/base/base-page.html' %}
+{%  load humanize %}
+{%  load i18n %}
+{% block body %}
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --card-shadow: 0 15px 35px rgba(102, 126, 234, 0.1);
+            --card-hover-shadow: 0 25px 50px rgba(102, 126, 234, 0.2);
+            --border-radius: 16px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        .modern-container {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 0 1rem;
+        }
+
+        .page-title {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+            font-size: 1.2rem;
+            font-weight: 400;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 0 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .link-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            overflow: hidden;
+            position: relative;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .link-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .link-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-header-modern {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header-modern::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .thread-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .thread-discount {
+            font-size: 1.1rem;
+            font-weight: 600;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+        }
+
+        .thread-discount::before {
+            content: '💰';
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .card-body-modern {
+            padding: 2rem;
+            background: white;
+        }
+
+        .url-input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .url-input {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem 3rem 1rem 1rem;
+            font-size: 0.9rem;
+            color: #4a5568;
+            font-family: 'Monaco', 'Menlo', monospace;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .url-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        .copy-indicator {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .actions-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: var(--success-gradient);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+            color: white;
+        }
+
+        .copy-btn::before {
+            content: '📋';
+            margin-right: 0.5rem;
+        }
+
+        .website-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .website-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .telegram-btn {
+            background: linear-gradient(135deg, #0088cc 0%, #005580 100%);
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .modal-modern .modal-content {
+            border-radius: var(--border-radius);
+            border: none;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(20px);
+        }
+
+        .modal-modern .modal-header {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+
+        .modal-modern .modal-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .modal-modern .close {
+            color: white;
+            opacity: 0.8;
+            font-size: 1.5rem;
+        }
+
+        .modal-modern .close:hover {
+            opacity: 1;
+            color: white;
+        }
+
+        .copied-animation {
+            animation: copySuccess 0.6s ease-out;
+        }
+
+        @keyframes copySuccess {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); background: #10b981; }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2.2rem;
+            }
+
+            .links-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 0 0.5rem;
+            }
+
+            .card-header-modern,
+            .card-body-modern {
+                padding: 1.5rem;
+            }
+
+            .actions-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.8rem;
+            }
+
+            .copy-btn,
+            .website-btn,
+            .telegram-btn {
+                width: 100%;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #64748b;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+
+    <div class="modern-container">
+        <!-- Modal -->
+        <div class="modal fade modal-modern" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">
+                            📊 Facebook dan olingan lidlarni yuklash
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">🔗 {% trans 'My Links' %}</h1>
+            <p class="page-subtitle">Sizning marketing havolalaringizni boshqaring</p>
+        </div>
+
+        <!-- Links Grid -->
+        <div class="links-grid">
+            {% for thread in threads %}
+                <div class="link-card">
+                    <div class="card-header-modern">
+                        <div class="thread-name">{{ thread.name }}</div>
+                        <div class="thread-discount">{{ thread.discount|floatformat|intcomma }}</div>
+                    </div>
+
+                    <div class="card-body-modern">
+                        <div class="url-input-group">
+                            <input type="text"
+                                   value="{{ request.get_host }}{% url 'thread-detail' thread.pk %}"
+                                   readonly
+                                   class="url-input ref_link"
+                                   id="url-{{ thread.pk }}">
+                            <div class="copy-indicator">📎</div>
+                        </div>
+
+                        <div class="actions-container">
+                            <button class="copy_ref_bn copy-btn" data-url-id="url-{{ thread.pk }}">
+                                Nusxa ko'chirish
+                            </button>
+
+                            <a href="{% url 'home' %}"
+                               target="_blank"
+                               class="copy-btn website-btn">
+                                🌐 Saytni ochish
+                            </a>
+
+{#                            <a href="https://t.me/AlijahonBot?start=order_{{ thread.pk }}"#}
+{#                               target="_blank"#}
+{#                               class="copy-btn telegram-btn">#}
+{#                                💬 Telegram bot#}
+{#                            </a>#}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔗</div>
+                    <h3>Hech qanday havola topilmadi</h3>
+                    <p>Yangi marketing havolalar yaratish uchun admin panel orqali oqim qo'shing.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        // Copy to clipboard functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const copyButtons = document.querySelectorAll('.copy_ref_bn');
+
+            copyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const urlId = this.getAttribute('data-url-id');
+                    const urlInput = document.getElementById(urlId);
+
+                    if (urlInput) {
+                        urlInput.select();
+                        urlInput.setSelectionRange(0, 99999); // For mobile devices
+
+                        try {
+                            document.execCommand('copy');
+
+                            // Success animation
+                            this.classList.add('copied-animation');
+                            const originalText = this.textContent;
+                            this.innerHTML = '✅ Nusxa olindi!';
+
+                            setTimeout(() => {
+                                this.innerHTML = '📋 Nusxa ko\'chirish';
+                                this.classList.remove('copied-animation');
+                            }, 2000);
+
+                        } catch (err) {
+                            console.error('Copy failed:', err);
+                            alert('Nusxa olishda xatolik yuz berdi');
+                        }
+                    }
+                });
+            });
+        });
+
+        // Add staggered animation to cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.link-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+
+{% endblock %}

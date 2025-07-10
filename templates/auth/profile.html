@@ -1,0 +1,118 @@
+{%  extends 'apps/base/base-page.html' %}
+{% load i18n %}
+
+{% block body %}
+    <div class="row g-0">
+        <div class="col-lg-8 pe-lg-2">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">{% trans 'Settings' %}</h5>
+                </div>
+                <div class="card-body bg-light">
+
+                    <form class="row g-3" action="{%  url 'profile' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="col-lg-6">
+                            {% trans 'Name' %}
+                            <input type="text" value="{{ user.first_name }}" name="first_name" class="form-control" maxlength="30" id="id_first_name">
+
+                        </div>
+
+                        <div class="col-lg-6">
+                            {% trans 'Surname' %}
+                            <input type="text" value="{{ user.last_name  }}" name="last_name" class="form-control" maxlength="40" id="id_last_name">
+
+                        </div>
+
+                        <div class="col-lg-6">
+
+                            {%  trans 'Region' %}
+                            <select name="region" class="form-control" id="id_region">
+                                <option value="{% trans 'Choose the region' %}" {% if not request.user.district %} selected{% endif %}>
+                                    {% trans 'Choose the region' %}</option>
+                                {% for region in regions %}
+                                    <option value="{{ region.pk }}" {% if request.user.district.region.pk == region.pk %} selected{% endif %}>{{ region.name }}</option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+                        <div class="col-lg-6">
+                            {% trans 'District' %}
+                                <select name="district" class="form-control" id="id_district">
+                                {% if user.district %}
+                                    <option value="{{user.district.pk }}">{{user.district.name }}</option>
+                                {% endif %}
+                            </select>
+
+                        </div>
+
+                        <div class="col-lg-6">
+                            {% trans 'Address' %}
+                            <input type="text" value="{{ user.address }}" name="address" class="form-control" maxlength="200" id="id_location">
+
+                        </div>
+
+                        <div class="col-lg-6">
+                            {% trans 'Telegram id' %}
+                            <input type="text" value="{{ user.telegram_id }}" name="telegram_id" class="form-control" maxlength="200" id="id_telegram_id">
+
+                        </div>
+
+                        <div class="col-lg-6">
+                            {% trans 'About yourself' %}
+                            <textarea name="about" cols="40" rows="10"  class="form-control" maxlength="399" id="id_description"></textarea>
+
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" type="submit">{% translate 'Save' %}</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-4 ps-lg-2">
+            <div class="sticky-sidebar">
+
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">{% translate 'Change the password' %}</h5>
+                        {% if messages %}
+                            {% for message in messages %}
+                                <h4 style="color: #e03e2d;">{{ message }}</h4>
+
+                            {% endfor %}
+
+
+                        {% endif %}
+                    </div>
+                    <div class="card-body bg-light">
+                        <form action="{% url 'change-password' %}" method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label" for="old-password">Oldingi parol</label>
+                                <input class="form-control" name="old_password" id="old-password" type="password">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="new-password">Yangi parol</label>
+                                <input class="form-control" name="new_password" id="new-password" type="password">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="confirm-password">Yangi parolni
+                                    takrorlash</label>
+                                <input class="form-control" name="confirm_password" id="confirm-password" type="password">
+                            </div>
+                            <button class="btn btn-primary d-block w-100" type="submit">Parolni yangilash
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

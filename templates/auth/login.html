@@ -1,0 +1,60 @@
+
+{% extends 'apps/base/base-page.html' %}
+{% load i18n %}
+{% load socialaccount %}
+
+{% block body %}
+    <div class="content_auth_form" style="width: 550px; margin-left: 20%; margin-top: 8%">
+        <div class="content_auth_form_group">
+            <div class="content_auth_form_group_input">
+                <div class="card">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <h4 style="color: red;">
+                             {{ message }}
+                            </h4>
+
+                        {% endfor %}
+
+
+                    {% endif %}
+                    <form method="post" action="{% url 'auth' %}">
+                        {% csrf_token %}
+                        <div class="card-header bg-circle-shape bg-shape text-center p-2"><a class="font-sans-serif fw-bolder fs-4 z-index-1 position-relative link-light light" href="/">Alijahon</a></div>
+                        <div class="card-body p-4">
+                            <div class="row flex-between-center">
+                                <div class="col-auto">
+                                    <h3>{% translate 'Login' %} </h3>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <label class="form-label" for="split-login-email">
+                                        {% translate 'Phone number' %}</label>
+                                </div>
+                                <input type="text" name="phone_number" id="phone-mask" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <label class="form-label" for="split-login-password">{%  trans 'Password' %}</label>
+                                </div>
+                                <input class="form-control" name="password" id="split-login-password" type="password">
+                            </div>
+
+                            <div class="mb-3">
+                                <button class="btn btn-primary d-block w-100 mt-3" type="submit">
+                                    {% translate 'Login' %}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <a href="{% provider_login_url 'google' %}">Login with Google</a>
+                    <a href="tg://resolve?domain=AloJahonLogInbot&start=login">Telegram orqali login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

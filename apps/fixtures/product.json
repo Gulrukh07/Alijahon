@@ -1,0 +1,23 @@
+[{"model": "apps.product",
+  "pk": 1,
+  "fields":
+  {"image": "products/2025/06/18/iphone16_9Xmx4Th.jpeg",
+    "title": "Iphone 16",
+    "price": "10000000.00",
+    "category": 1, "quantity": 10,
+    "description": "apple product",
+    "created": "2025-06-18T12:43:55.996Z",
+    "updated": "2025-06-18T12:43:55.996Z"}},
+
+  {"model": "apps.product", "pk": 2,
+    "fields":
+    {"image": "products/2025/06/19/shkaf.jpeg",
+      "title": "kiyim javoni",
+      "price": "7000000.00",
+      "category": 2,
+      "quantity": 12,
+      "description": "ko'p funksiyalarga ega kiyim javoni uyingiz un eng yaxshi tanlov",
+      "created": "2025-06-19T09:16:09.226Z",
+      "updated": "2025-06-19T09:16:09.226Z"}
+  }
+]

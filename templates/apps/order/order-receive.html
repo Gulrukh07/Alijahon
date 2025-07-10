@@ -1,0 +1,461 @@
+{%  extends 'apps/base/base-page.html' %}
+{% load humanize %}
+{% block body %}
+
+    <style>
+        :root {
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --green-gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            --card-shadow: 0 20px 40px rgba(79, 172, 254, 0.15);
+            --border-radius: 20px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .success-container {
+            background: linear-gradient(135deg, #6916f1 0%, #6916f1 30%, #4facfe 70%, #00f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .success-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            max-width: 800px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .success-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--success-gradient);
+        }
+
+        .success-header {
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            background: var(--green-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 30px rgba(132, 250, 176, 0.3);
+            animation: bounceIn 1s ease-out 0.3s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        .success-icon img {
+            width: 60px;
+            height: 60px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .success-title {
+            color: #2d3748;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideInDown 0.8s ease-out 0.5s both;
+        }
+
+        .success-subtitle {
+            color: #4a5568;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            animation: slideInUp 0.8s ease-out 0.7s both;
+        }
+
+        .success-note {
+            color: #e53e3e;
+            font-size: 1.1rem;
+            font-weight: 600;
+            animation: slideInUp 0.8s ease-out 0.9s both;
+        }
+
+        .order-details {
+            padding: 0 2rem 2rem;
+            animation: fadeIn 1s ease-out 1.1s both;
+        }
+
+        .order-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border: none;
+            margin-bottom: 2rem;
+        }
+
+        .order-table thead {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .order-table thead th {
+            padding: 1.25rem 1rem;
+            font-weight: 600;
+            border: none;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .order-table tbody td,
+        .order-table tbody th {
+            padding: 1.25rem 1rem;
+            border: none;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+            font-size: 1rem;
+        }
+
+        .order-table tbody tr {
+            transition: var(--transition);
+        }
+
+        .order-table tbody tr:hover {
+            background: #f8fafc;
+            transform: scale(1.01);
+        }
+
+        .order-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .price-cell {
+            font-weight: 600;
+            color: var(--success-color, #48bb78);
+        }
+
+        .delivery-row {
+            background: linear-gradient(135deg, #fef5e7 0%, #fed7aa 100%);
+            font-weight: 600;
+        }
+
+        .delivery-row td,
+        .delivery-row th {
+            color: #c05621;
+        }
+
+        .action-section {
+            padding: 0 2rem 3rem;
+            display: flex;
+            justify-content: center;
+            animation: slideInUp 1s ease-out 1.3s both;
+        }
+
+        .continue-btn {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 1rem 3rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .continue-btn::before {
+            content: '🛍️';
+            font-size: 1.2rem;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .continue-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .continue-btn:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) {
+            width: 4px;
+            height: 4px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .particle:nth-child(2) {
+            width: 6px;
+            height: 6px;
+            top: 60%;
+            right: 20%;
+            animation-delay: 2s;
+        }
+
+        .particle:nth-child(3) {
+            width: 3px;
+            height: 3px;
+            bottom: 30%;
+            left: 80%;
+            animation-delay: 4s;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes shimmer {
+            0%, 100% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            50% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(-20px);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .success-container {
+                padding: 1rem 0.5rem;
+            }
+
+            .success-header {
+                padding: 2rem 1rem 1.5rem;
+            }
+
+            .success-title {
+                font-size: 2rem;
+            }
+
+            .success-subtitle,
+            .success-note {
+                font-size: 1rem;
+            }
+
+            .order-details {
+                padding: 0 1rem 2rem;
+            }
+
+            .order-table thead th,
+            .order-table tbody td,
+            .order-table tbody th {
+                padding: 1rem 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            .action-section {
+                padding: 0 1rem 2rem;
+            }
+
+            .continue-btn {
+                padding: 0.875rem 2rem;
+                font-size: 1rem;
+            }
+
+            .success-icon {
+                width: 100px;
+                height: 100px;
+            }
+
+            .success-icon img {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+
+    <div class="success-container">
+        <div class="floating-particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+
+        <div class="success-card">
+            <div class="success-header">
+                <div class="success-icon">
+                    <img src="https://img.icons8.com/cute-clipart/64/ok.png" alt="Success">
+                </div>
+                <h1 class="success-title">Arizangiz qabul qilindi!</h1>
+                <p class="success-subtitle">Batafsil ma'lumot uchun operator yaqin vaqt ichida siz bilan aloqaga chiqadi.</p>
+                <p class="success-note">📞 Iltimos, telefoningiz yoqilgan holda bo'lsin!</p>
+            </div>
+
+            <div class="order-details">
+                <table class="table order-table">
+                    <thead>
+                    <tr>
+                        <th>📦 Mahsulot</th>
+                        <th>💰 Summa</th>
+                        <th>🔢 Soni</th>
+                        <th>📊 Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="product-name">{{ order.product.title }}</td>
+                        {% if order.thread %}
+                            <td class="price-cell">{{ order.thread.discount_amount|floatformat|intcomma }} so'm</td>
+                        {% else %}
+                            <td class="price-cell">{{ order.product.price|floatformat|intcomma }} so'm</td>
+                        {% endif %}
+                        <td>{{ order.quantity }}</td>
+                        <td class="price-cell">{{ order.total|floatformat|intcomma }} so'm</td>
+                    </tr>
+                    <tr class="delivery-row">
+                        <td colspan="3"><strong>🚚 Yetkazib berish</strong></td>
+                        <td><strong>{{ site.delivery_price|floatformat|intcomma }} so'm</strong></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="action-section">
+                <a href="{% url 'product-list' %}" class="continue-btn">
+                    Boshqa mahsulotlar
+                </a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

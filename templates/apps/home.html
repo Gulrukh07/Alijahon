@@ -1,0 +1,252 @@
+{% extends 'apps/base/base-page.html' %}
+{% load humanize %}
+{% load i18n %}
+
+{% block body %}
+    <!-- Categories Section -->
+    <div class="card mt-3 mb-4 shadow-sm border-0" style="border-radius: 15px;">
+        <div class="card-header bg-gradient-primary text-white border-0" style="border-radius: 15px 15px 0 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="mb-0 fw-bold" id="followers">
+                        <i class="fas fa-th-large me-2"></i>Kategoriyalar
+                    </h5>
+                </div>
+                <div class="col text-end">
+                    <a class="text-white text-decoration-none fw-semibold" href="{% url 'category-list' %}">
+                        {% translate 'Categories' %}
+                        <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body bg-light px-3 py-4" style="border-radius: 0 0 15px 15px;">
+            <div class="row g-3 text-center">
+                {% for category in categories %}
+                    <div class="col-4 col-md-4 col-lg-3 col-xl-2">
+                        <div class="bg-white rounded-3 p-3 h-100 shadow-sm border-0 category-card" style="transition: all 0.3s ease;">
+                            <a href="{% url 'product-list' %}" class="text-decoration-none">
+                                <div class="category-image-wrapper mb-3" style="position: relative; overflow: hidden; border-radius: 12px;">
+                                    <img class="img-fluid shadow-sm category-image"
+                                         src="{{ category.image }}"
+                                         alt="{{ category.name }}"
+                                         style="width: 100px; height: 100px; object-fit: cover; transition: transform 0.3s ease;">
+                                </div>
+                            </a>
+                            <h6 class="mb-0 fw-semibold">
+                                <a href="{% url 'product-list' %}?category_slug={{ category.slug }}"
+                                   class="text-dark text-decoration-none category-link">
+                                    {{ category.name }}
+                                </a>
+                            </h6>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    <div class="card mb-4 shadow-sm border-0" style="border-radius: 15px;">
+        <!-- Products Grid -->
+        <div class="card-body p-4">
+            <div class="row g-4">
+                {% for product in products %}
+                    <div class="col-6 col-md-6 col-lg-4 col-xl-3">
+                        <div class="card h-100 border-0 shadow-sm product-card" style="border-radius: 15px; transition: all 0.3s ease;">
+                            <div class="position-relative overflow-hidden" style="border-radius: 15px 15px 0 0;">
+                                <a class="d-block" href="{% url 'order-form' product.pk %}">
+                                    <img class="img-fluid w-100 product-image"
+                                         src="{{ product.image.url }}"
+                                         alt="{{ product.title }}"
+                                         style="height: 220px; object-fit: cover; transition: transform 0.3s ease;">
+                                </a>
+                                <!-- Stock Badge -->
+                                <div class="position-absolute top-0 end-0 m-2">
+                                    <span class="badge bg-success bg-opacity-90 rounded-pill px-3 py-2">
+                                        <i class="fas fa-box me-1"></i>{{ product.quantity }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="card-body p-3 d-flex flex-column">
+                                <div class="flex-grow-1">
+                                    <!-- Product Title -->
+                                    <h6 class="card-title mb-2 fw-bold" style="font-size: 0.95rem; line-height: 1.4;">
+                                        <a class="text-dark text-decoration-none" href="{% url 'order-form' product.pk %}">
+                                            {{ product.title }}
+                                        </a>
+                                    </h6>
+
+                                    <!-- Category -->
+                                    <p class="text-muted small mb-2">
+                                        <a class="text-decoration-none text-muted" href="/category/kitoblar">
+                                            <i class="fas fa-tag me-1"></i>{{ product.category.name }}
+                                        </a>
+                                    </p>
+
+                                    <!-- Price -->
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h5 class="text-success fw-bold mb-0 me-2" style="font-size: 1.1rem;">
+                                            {{ product.price | intcomma }} so'm
+                                        </h5>
+                                        <!-- <small class="text-muted text-decoration-line-through">180 000 so'm</small> -->
+                                    </div>
+
+                                    <!-- Stock Info -->
+                                    <p class="text-muted small mb-3">
+                                        <i class="fas fa-warehouse me-1"></i>
+                                        Sotuvda {{ product.quantity }} dona
+                                    </p>
+                                </div>
+
+                                <!-- Add to Cart Button -->
+                                <div>
+                                    <div class="d-flex flex-between-center px-3">
+                                        <a class="btn btn-sm btn-falcon-default" href="{% url 'order-form' product.pk %}" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Add to Cart" aria-label="Add to Cart">
+                                            <svg class="svg-inline--fa fa-cart-plus fa-w-18" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="cart-plus" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg=""><path fill="currentColor" d="M504.717 320H211.572l6.545 32h268.418c15.401 0 26.816 14.301 23.403 29.319l-5.517 24.276C523.112 414.668 536 433.828 536 456c0 31.202-25.519 56.444-56.824 55.994-29.823-.429-54.35-24.631-55.155-54.447-.44-16.287 6.085-31.049 16.803-41.548H231.176C241.553 426.165 248 440.326 248 456c0 31.813-26.528 57.431-58.67 55.938-28.54-1.325-51.751-24.385-53.251-52.917-1.158-22.034 10.436-41.455 28.051-51.586L93.883 64H24C10.745 64 0 53.255 0 40V24C0 10.745 10.745 0 24 0h102.529c11.401 0 21.228 8.021 23.513 19.19L159.208 64H551.99c15.401 0 26.816 14.301 23.403 29.319l-47.273 208C525.637 312.246 515.923 320 504.717 320zM408 168h-48v-40c0-8.837-7.163-16-16-16h-16c-8.837 0-16 7.163-16 16v40h-48c-8.837 0-16 7.163-16 16v16c0 8.837 7.163 16 16 16h48v40c0 8.837 7.163 16 16 16h16c8.837 0 16-7.163 16-16v-40h48c8.837 0 16-7.163 16-16v-16c0-8.837-7.163-16-16-16z"></path>
+                                            </svg><!-- <span class="fas fa-cart-plus"></span> Font Awesome fontawesome.com -->
+                                        </a>
+                                        <a class="btn btn-sm btn-falcon-default me-2, like-button {% if product.pk in request.user.wishlist_products %} bg-danger{% endif %}
+" href="#!"
+                                           data-bs-toggle="tooltip" data-bs-placement="top" data-product-id="{{ product.pk }}"
+                                           title="" data-bs-original-title="Add to Wish List"
+                                           aria-label="Add to Wish List"><svg
+                                                class="svg-inline--fa fa-heart fa-w-16" aria-hidden="true"
+                                                focusable="false" data-prefix="far" data-icon="heart" role="img"
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                            <path fill="currentColor" d="M458.4 64.3C400.6 15.7 311.3 23 256 79.3 200.7 23 111.4 15.6 53.6 64.3-21.6 127.6-10.6 230.8 43 285.5l175.4 178.7c10 10.2 23.4 15.9 37.6 15.9 14.3 0 27.6-5.6 37.6-15.8L469 285.6c53.5-54.7 64.7-157.9-10.6-221.3zm-23.6 187.5L259.4 430.5c-2.4 2.4-4.4 2.4-6.8 0L77.2 251.8c-36.5-37.2-43.9-107.6 7.3-150.7 38.9-32.7 98.9-27.8 136.5 10.5l35 35.7 35-35.7c37.8-38.5 97.8-43.2 136.5-10.6 51.1 43.1 43.5 113.9 7.3 150.8z">
+
+                                            </path>
+                                        </svg>
+                                            <!-- <span class="far fa-heart"></span> Font Awesome fontawesome.com -->
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Category Cards Hover Effects */
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+        }
+
+        .category-card:hover .category-image {
+            transform: scale(1.1);
+        }
+
+        .category-link:hover {
+            color: #0d6efd !important;
+        }
+
+        /* Product Cards Hover Effects */
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        /* Button Hover Effects */
+        .add-to-cart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+        }
+
+        /* Search Input Focus */
+        .search-input:focus {
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+            border-color: #86b7fe;
+        }
+
+        /* Gradient Background */
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+
+        /* Badge Styling */
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Smooth Transitions */
+        * {
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive Improvements */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1rem !important;
+            }
+
+            .card-title {
+                font-size: 0.9rem !important;
+            }
+
+            .btn {
+                font-size: 0.85rem;
+                padding: 0.5rem 1rem !important;
+            }
+
+            .category-image-wrapper img {
+                width: 80px !important;
+                height: 80px !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .product-image {
+                height: 180px !important;
+            }
+
+            .category-image-wrapper img {
+                width: 70px !important;
+                height: 70px !important;
+            }
+        }
+
+        /* Input Group Styling */
+        .input-group-text {
+            background-color: white;
+            border: 1px solid #ced4da;
+        }
+
+        .form-control {
+            border: 1px solid #ced4da;
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: #86b7fe;
+        }
+
+        /* Custom Scrollbar for Search Results */
+        .scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+{% endblock %}

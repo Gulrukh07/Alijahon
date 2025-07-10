@@ -1,0 +1,19 @@
+[
+  {"model": "apps.category",
+    "pk": 1,
+    "fields":
+    {"image": "https://img.icons8.com/fluency/50/iphone-x--v1.png",
+      "name": "Electronics",
+      "slug": "electronics"
+    }
+  },
+
+  {"model": "apps.category",
+    "pk": 2,
+    "fields":
+    {"image": "https://img.icons8.com/plasticine/50/home.png",
+      "name": "Home",
+      "slug": "home-1"
+    }
+  }
+]

@@ -1,0 +1,545 @@
+{% extends 'apps/base/base-page.html' %}
+{% load i18n %}
+
+{% block body %}
+    <style>
+        /* Modern giveaway card styles */
+        .giveaway-main-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.2);
+            overflow: hidden;
+            position: relative;
+            backdrop-filter: blur(20px);
+            margin-top: 20px;
+        }
+
+        .giveaway-main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            background-size: 300% 300%;
+            animation: rainbowShift 4s ease infinite;
+        }
+
+        @keyframes rainbowShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .giveaway-image-container {
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .giveaway-image {
+            transition: all 0.5s ease;
+            filter: brightness(1.1) contrast(1.1);
+        }
+
+        .giveaway-image:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2) contrast(1.2);
+        }
+
+        .giveaway-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .giveaway-image-container:hover .giveaway-image-overlay {
+            opacity: 1;
+        }
+
+        .giveaway-body {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            position: relative;
+        }
+
+        .giveaway-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #495057;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .giveaway-description::before {
+            content: '🎉';
+            font-size: 1.5rem;
+            margin-right: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        /* Time cards */
+        .time-cards-container {
+            margin-top: 20px;
+        }
+
+        .time-card {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transform-style: preserve-3d;
+        }
+
+        .time-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .time-card-start {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            box-shadow: 0 15px 35px rgba(79, 172, 254, 0.3);
+        }
+
+        .time-card-end {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            box-shadow: 0 15px 35px rgba(250, 112, 154, 0.3);
+        }
+
+        .time-card-body {
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .time-card-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        .time-card-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 1px;
+        }
+
+        .time-card-text {
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 0;
+            opacity: 0.95;
+        }
+
+        .time-card::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.6; }
+        }
+
+        /* Results table card */
+        .results-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(240, 147, 251, 0.2);
+            overflow: hidden;
+            position: relative;
+            margin-top: 30px;
+        }
+
+        .results-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .results-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: none;
+            padding: 25px 30px;
+        }
+
+        .results-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            position: relative;
+        }
+
+        .results-title::before {
+            content: '🏆';
+            margin-right: 15px;
+            font-size: 1.5rem;
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .results-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #f093fb, #f5576c);
+            border-radius: 2px;
+        }
+
+        .results-body {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 0;
+        }
+
+        /* Modern table */
+        .modern-results-table {
+            margin: 0;
+            background: transparent;
+            border: none;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .modern-results-table thead th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: 0.9rem;
+            padding: 20px 15px;
+            border: none;
+            position: relative;
+            text-align: center;
+        }
+
+        .modern-results-table thead th:first-child {
+            border-top-left-radius: 15px;
+            text-align: center;
+        }
+
+        .modern-results-table thead th:last-child {
+            border-top-right-radius: 15px;
+        }
+
+        .modern-results-table tbody tr {
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .modern-results-table tbody tr:nth-child(odd) {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .modern-results-table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(240, 147, 251, 0.2);
+        }
+
+        .modern-results-table tbody tr:hover::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .modern-results-table tbody td {
+            padding: 20px 15px;
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: middle;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Ranking styles */
+        .rank-number {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.3);
+            animation: rankPulse 2s infinite;
+        }
+
+        .rank-number.first {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+            animation: goldShine 2s infinite;
+        }
+
+        .rank-number.second {
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+            box-shadow: 0 8px 20px rgba(192, 192, 192, 0.4);
+        }
+
+        .rank-number.third {
+            background: linear-gradient(135deg, #cd7f32 0%, #daa520 100%);
+            box-shadow: 0 8px 20px rgba(205, 127, 50, 0.4);
+        }
+
+        @keyframes rankPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes goldShine {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4); }
+            50% { transform: scale(1.1); box-shadow: 0 12px 30px rgba(255, 215, 0, 0.6); }
+        }
+
+        .seller-name {
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .seller-name::before {
+            content: '👤';
+            margin-right: 10px;
+            font-size: 1rem;
+        }
+
+        .orders-count {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            display: inline-block;
+            box-shadow: 0 6px 15px rgba(78, 205, 196, 0.3);
+            position: relative;
+        }
+
+        .orders-count::before {
+            content: '📦';
+            margin-right: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Scroll animation */
+        .modern-results-table tbody tr {
+            animation: slideInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .modern-results-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        .modern-results-table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+        .modern-results-table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+        .modern-results-table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+        .modern-results-table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .giveaway-main-card,
+            .results-card {
+                border-radius: 20px;
+                margin: 15px 10px;
+            }
+
+            .giveaway-body {
+                padding: 20px;
+            }
+
+            .time-card-body {
+                padding: 20px 15px;
+            }
+
+            .modern-results-table thead th,
+            .modern-results-table tbody td {
+                padding: 15px 10px;
+                font-size: 0.9rem;
+            }
+
+            .results-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Custom scrollbar */
+        .scrollbar::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        .scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #e084ec 0%, #e6485d 100%);
+        }
+    </style>
+
+    <div class="card-group mt-2">
+        <div class="giveaway-main-card overflow-hidden">
+            <div class="giveaway-image-container">
+                <img class="giveaway-image img-fluid w-100" src="{{ site.giveaway_image.url }}" alt="Konkurs">
+                <div class="giveaway-image-overlay"></div>
+            </div>
+            <div class="giveaway-body">
+                <div class="giveaway-description">
+                    {{ site.giveaway_description |safe }}
+                </div>
+                <div class="row time-cards-container">
+                    <div class="col-6 col-sm-6 col-lg-4 mb-4">
+                        <div class="time-card time-card-start text-white">
+                            <div class="time-card-body">
+                                <div class="time-card-title">{% trans 'Start' %}</div>
+                                <p class="time-card-text">
+                                    {{ site.giveaway_start_time|date:"d-F, Y" }} - {% trans 'year' %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-6 col-lg-4 mb-4">
+                        <div class="time-card time-card-end text-white">
+                            <div class="time-card-body">
+                                <div class="time-card-title">{% trans 'End' %}</div>
+                                <p class="time-card-text">
+                                    {{ site.giveaway_end_time|date:"d-F, Y" }} - {% trans 'year' %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="results-card mb-3">
+        <div class="results-header">
+            <div class="row flex-between-end">
+                <div class="col-auto align-self-center">
+                    <h5 class="results-title" data-anchor="data-anchor" id="table-example">
+                        {% trans 'Giveaway Results' %}
+                        <a class="anchorjs-link" aria-label="Anchor" data-anchorjs-icon="#" href="#table-example" style="padding-left: 0.375em;"></a>
+                    </h5>
+                </div>
+            </div>
+        </div>
+        <div class="results-body pt-0">
+            <div class="tab-content">
+                <div class="tab-pane preview-tab-pane active" role="tabpanel" aria-labelledby="tab-dom-316cb649-6a3e-4ec3-9de8-7d83e880873f" id="dom-316cb649-6a3e-4ec3-9de8-7d83e880873f">
+                    <div id="tableExample" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
+                        <div class="table-responsive scrollbar">
+                            <table class="modern-results-table table fs--1 mb-0">
+                                <thead>
+                                <tr>
+                                    <th class="sort" data-sort="name">№</th>
+                                    <th class="sort" data-sort="email">Sotuvchi</th>
+                                    <th class="sort" data-sort="age">Sotilgan</th>
+                                </tr>
+                                </thead>
+                                <tbody class="list">
+                                {% for seller in sellers %}
+                                    <tr>
+                                        <td class="name">
+                                            <div class="rank-number {% if forloop.counter == 1 %}first{% elif forloop.counter == 2 %}second{% elif forloop.counter == 3 %}third{% endif %}">
+                                                {{ forloop.counter }}
+                                            </div>
+                                        </td>
+                                        <td class="email">
+                                            <div class="seller-name">{{ seller.first_name }}{{ seller.last_name }}</div>
+                                        </td>
+                                        <td class="age">
+                                            <div class="orders-count">{{ seller.order_count }}</div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,370 @@
+{% extends 'apps/base/base-page.html' %}
+{% load humanize %}
+
+{% block body %}
+    <style>
+        /* Modern card styles */
+        .modern-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .modern-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .modern-card-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: none;
+            padding: 25px 30px;
+            position: relative;
+        }
+
+        .modern-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            text-shadow: none;
+            position: relative;
+        }
+
+        .modern-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            border-radius: 2px;
+        }
+
+        .modern-card-body {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 0;
+            position: relative;
+        }
+
+        /* Table styles */
+        .modern-table {
+            margin: 0;
+            background: transparent;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .modern-table thead th {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #495057;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            padding: 20px 15px;
+            border: none;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .modern-table thead th:first-child {
+            border-top-left-radius: 15px;
+        }
+
+        .modern-table thead th:last-child {
+            border-top-right-radius: 15px;
+        }
+
+        .modern-table tbody tr {
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+        }
+
+        .modern-table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
+        }
+
+        .modern-table tbody tr:hover::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 0 2px 2px 0;
+        }
+
+        .modern-table tbody td {
+            padding: 20px 15px;
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: middle;
+            position: relative;
+        }
+
+        /* Order ID styling */
+        .order-id {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .order-id:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+        }
+
+        .customer-name {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .customer-contact {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .customer-contact:hover {
+            color: #667eea;
+        }
+
+        /* Date styling */
+        .date-cell {
+            color: #495057;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .date-cell::before {
+            content: '📅';
+            margin-right: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Address styling */
+        .address-cell {
+            color: #495057;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .address-cell::before {
+            content: '📍';
+            margin-right: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Status badge */
+        .modern-badge {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); }
+            50% { box-shadow: 0 6px 20px rgba(78, 205, 196, 0.5); }
+        }
+
+        .modern-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+        }
+
+        .status-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            animation: checkmark 0.5s ease-in-out;
+        }
+
+        @keyframes checkmark {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Amount styling */
+        .amount-cell {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #495057;
+            position: relative;
+        }
+
+        .amount-cell::before {
+            content: '💰';
+            margin-right: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Scrollbar styling */
+        .modern-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .modern-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .modern-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .modern-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6b4190 100%);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .modern-card {
+                border-radius: 15px;
+                margin: 10px;
+            }
+
+            .modern-card-header {
+                padding: 20px;
+            }
+
+            .modern-title {
+                font-size: 1.5rem;
+            }
+
+            .modern-table thead th,
+            .modern-table tbody td {
+                padding: 15px 10px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Loading animation */
+        .modern-table tbody tr {
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .modern-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        .modern-table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+        .modern-table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+        .modern-table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+        .modern-table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    <div class="modern-card mb-3" id="ordersTable" data-list="{&quot;valueNames&quot;:[&quot;order&quot;,&quot;date&quot;,&quot;address&quot;,&quot;status&quot;,&quot;amount&quot;],&quot;page&quot;:10,&quot;pagination&quot;:true}">
+        <div class="modern-card-header">
+            <div class="row flex-between-center">
+                <div class="col-4 col-sm-auto d-flex align-items-center pe-0">
+                    <h5 class="modern-title">Orders</h5>
+                </div>
+            </div>
+        </div>
+        <div class="modern-card-body">
+            <div class="table-responsive modern-scrollbar">
+                <table class="modern-table table table-sm fs--1 mb-0 overflow-hidden">
+                    <thead>
+                    <tr>
+                        <th class="sort pe-1 align-middle white-space-nowrap" data-sort="order">Order</th>
+                        <th class="sort pe-1 align-middle white-space-nowrap pe-7" data-sort="date">Date</th>
+                        <th class="sort pe-1 align-middle white-space-nowrap" data-sort="address" style="min-width: 12.5rem;">Ship To</th>
+                        <th class="sort pe-1 align-middle white-space-nowrap text-center" data-sort="status">Status</th>
+                        <th class="sort pe-1 align-middle white-space-nowrap text-end" data-sort="amount">Amount</th>
+                        <th class="no-sort"></th>
+                    </tr>
+                    </thead>
+                    <tbody class="list" id="table-orders-body">
+                    {% for order in orders %}
+                        <tr class="btn-reveal-trigger">
+                            <td class="order py-2 align-middle white-space-nowrap">
+                                <a href="" class="order-id">
+                                    <strong>#{{ order.pk }}</strong>
+                                </a>
+                                <div class="customer-name">{{ order.fullname }}</div>
+                                <a href="mailto:ricky@example.com" class="customer-contact">{{ order.customer.phone_number }}</a>
+                            </td>
+                            <td class="date py-2 align-middle">
+                                <div class="date-cell">{{ order.created_at }}</div>
+                            </td>
+                            <td class="address py-2 align-middle white-space-nowrap">
+                                <div class="address-cell">{{ order.district }} {{ order.region }}</div>
+                            </td>
+                            <td class="status py-2 align-middle text-center fs-0 white-space-nowrap">
+                            <span class="modern-badge">
+                                {{ order.status }}
+                                <svg class="status-icon" data-fa-transform="shrink-2" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                    <path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path>
+                                </svg>
+                            </span>
+                            </td>
+                            <td class="amount py-2 align-middle text-end fs-0 fw-medium">
+                                <div class="amount-cell">{{ order.total |intcomma }}</div>
+                            </td>
+                            <td class="py-2 align-middle white-space-nowrap text-end"></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,557 @@
+{% extends 'apps/base/base-page.html' %}
+{%  load humanize %}
+{%  load i18n %}
+{% block body %}
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --dark-color: #2d3748;
+            --light-color: #f7fafc;
+            --success-color: #48bb78;
+            --danger-color: #f56565;
+            --warning-color: #ed8936;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            padding: 30px;
+            max-width: 1400px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 15px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="20" cy="80" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .category-tabs {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid transparent;
+            border-radius: 25px;
+            padding: 12px 24px;
+            color: var(--dark-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            transition: left 0.3s ease;
+            z-index: 1;
+        }
+
+        .tab-btn span {
+            position: relative;
+            z-index: 2;
+        }
+
+        .tab-btn:hover::before,
+        .tab-btn.active::before {
+            left: 0;
+        }
+
+        .tab-btn:hover,
+        .tab-btn.active {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 25px;
+            padding: 15px 50px 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+            background: white;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 18px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            position: relative;
+            overflow: hidden;
+            height: 250px;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-content {
+            padding: 25px;
+        }
+
+        .product-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+            text-decoration: none;
+        }
+
+        .product-title:hover {
+            color: var(--primary-color);
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success-color);
+            margin-bottom: 15px;
+        }
+
+        .product-info {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 5px 0;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .product-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-danger-custom {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+        }
+
+        .btn-success-custom {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            pointer-events: auto;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 20px 30px;
+        }
+
+        .modal-title {
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-buttons {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .loading-animation {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modal backdropni o'chirish */
+        .modal-backdrop {
+            display: none !important;
+        }
+    </style>
+
+    <body>
+    <div class="container-fluid">
+        <div class="main-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                {% if messages %}
+                    {% for message in messages %}
+                        <h4 style="color: red;">{{ message }}</h4>
+                    {% endfor %}
+                {% endif %}
+                <h1><i class="fas fa-store me-3"></i>Hozirda sotuvda bor mahsulotlar</h1>
+            </div>
+
+            <!-- Category Tabs and Search -->
+            <div class="category-tabs">
+                <div class="tab-buttons">
+                    <a href="{% url 'market' %}" class="tab-btn active">
+                        <span><i class="fas fa-th me-2"></i>Hammasi</span>
+                    </a>
+                    <a href="{% url 'market' %}?category_slug=top" class="tab-btn">
+                        <span><i class="fas fa-star me-2"></i>Top tovarlar</span>
+                    </a>
+                    {% for category in categories %}
+                        {% if c_slug == category.slug %}
+                            <a href="{% url 'market' %}?category_slug={{ category.slug }}" class="tab-btn">
+                                <span>{{ category.name }}</span>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'market' %}?category_slug={{ category.slug }}" class="tab-btn">
+                                <span>{{ category.name }}</span>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid">
+                {% for product in products %}
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                        </div>
+                        <div class="product-content">
+                            <h5 class="product-title">
+                                <a href="#" target="_blank">{{ product.title }}</a>
+                            </h5>
+                            <div class="product-price">{{ product.price | intcomma }} so'm</div>
+
+                            <div class="product-info">
+                                <div class="info-item">
+                                    <span class="info-label"><i class="fas fa-credit-card me-2"></i>{% trans 'Payment' %}</span>
+                                    <span class="info-value">{{ product.seller_price | floatformat|intcomma }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label"><i class="fas fa-boxes me-2"></i>{% trans 'Available' %}</span>
+                                    <span class="info-value">{{ product.quantity }}</span>
+                                </div>
+                            </div>
+
+                            <div class="product-actions">
+                                <a href="https://t.me/Alijahon_bot/{{ product.message_id }}" class="action-btn btn-danger-custom">
+                                    <i class="fas fa-bullhorn me-2"></i>Reklama Posti
+                                </a>
+                                <button class="action-btn btn-primary-custom btn_open_modal"
+                                        data-benefit="{{ product.seller_price }}"
+                                        type="button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#createStreamModal_{{ product.pk }}"
+                                        name="product">
+                                    <i class="fas fa-stream me-2"></i>Oqim yaratish
+                                </button>
+                                <a href="{% url 'order-form' product.pk %}" class="action-btn btn-success-custom">
+                                    <i class="fas fa-info-circle me-2"></i>Batafsil
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Modal for this specific product -->
+                        <div class="modal fade" id="createStreamModal_{{ product.pk }}" tabindex="-1" aria-labelledby="createStreamModalLabel_{{ product.pk }}" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="{{ product.pk }}">
+                                            <i class="fas fa-stream me-2"></i>Oqim yaratish
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="POST" action="{% url 'thread-form' %}" class="needs-validation" novalidate>
+                                            {% csrf_token %}
+                                            <input name="product" type="hidden" value="{{ product.pk }}">
+
+                                            <div class="mb-4">
+                                                <label for="id_title_{{ product.pk }}" class="form-label">
+                                                    <i class="fas fa-tag me-2"></i>Oqim nomi
+                                                </label>
+                                                <input type="text" name="name" class="form-control" placeholder="Oqim uchun nom kiriting" required id="id_title_{{ product.pk }}">
+                                                <div class="invalid-feedback">
+                                                    Iltimos, oqim nomini kiriting.
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <label for="id_discount_{{ product.pk }}" class="form-label">
+                                                    <i class="fas fa-percent me-2"></i>Chegirma
+                                                </label>
+                                                <input type="text" name="discount" class="form-control" placeholder="Chegirma miqdorini kiriting" id="id_discount_{{ product.pk }}">
+                                                <small class="form-text text-muted">Maksimal chegirma: {{ product.seller_price | intcomma }} so'mgacha</small>
+                                            </div>
+
+                                            <div class="d-grid">
+                                                <button type="submit" class="action-btn btn-primary-custom">
+                                                    <i class="fas fa-plus me-2"></i>Oqim yaratish
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Form validation
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+
+        // Smooth animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                }
+            });
+        });
+
+        document.querySelectorAll('.product-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Modal ochilganda inputlarni faol qilish
+        document.addEventListener('shown.bs.modal', function (event) {
+            const modal = event.target;
+            const inputs = modal.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                input.disabled = false;
+                input.focus();
+            });
+        });
+    </script>
+    </body>
+{% endblock %}
