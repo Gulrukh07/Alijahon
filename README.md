@@ -1,6 +1,6 @@
 ## 🇺🇿 O‘zbekcha
 
-# 🛍️ Alijahon – Ko‘p tilli E-Commerce Platforma
+# 🛍️ Alijahon – E-Commerce Platforma
 
 **Alijahon** – bu ko‘p funksiyali, ko‘p tilli onlayn-do‘kon bo‘lib, foydalanuvchilar mahsulotlarni ko‘rish, buyurtma berish, sotuvi uchun mahsulot joylashtirish, sevimlilarni saqlash va tarixni kuzatish imkoniyatlariga ega. Loyiha Django asosida qurilgan va Google, Telegram orqali autentifikatsiya, hamda to‘lov tizimi bilan integratsiyalashgan.
 
