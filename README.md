@@ -1,61 +1,96 @@
-## 🇺🇿 O‘zbekcha
 
-# 🛍️ Alijahon – E-Commerce Platforma
+# 🛍️ Alijahon – E-Commerce Platform
 
-**Alijahon** – bu ko‘p funksiyali, ko‘p tilli onlayn-do‘kon bo‘lib, foydalanuvchilar mahsulotlarni ko‘rish, buyurtma berish, sotuvi uchun mahsulot joylashtirish, sevimlilarni saqlash va tarixni kuzatish imkoniyatlariga ega. Loyiha Django asosida qurilgan va Google, Telegram orqali autentifikatsiya, hamda to‘lov tizimi bilan integratsiyalashgan.
+**Alijahon** is a modern and scalable e-commerce web application built using Django. It supports multiple user roles and provides functionality for product management, ordering, and delivery processes.
 
-### ⚙️ Imkoniyatlar
+## 🚀 Features
 
-* 🔐 Telefon, Google va Telegram orqali login
-* 🛒 Mahsulotlar, sevimlilar, va buyurtmalar
-* 🧑‍💼 Admin, operator, delivery panellari
-* 📊 Statistik ko‘rsatkichlar
-* 🎁 Giveaway funksiyasi
-* 🌐 3 til: UZ, RU, EN
+- 👤 **User Roles**: Customers, Admins, Operators, Delivery Agents
+- 📦 **Product Catalog**: Browse, view, and manage products
+- 🛒 **Cart & Checkout**: Add products to cart and place orders
+- 🧾 **Order Management**: Track order status and delivery
+- 🔐 **Authentication & Authorization**: Role-based access with secure login
+- 📂 **Admin Dashboard**: Manage users, products, and orders
+- 🖼️ Clean and organized UI built with Django templates
 
-### 🧱 Texnologiyalar
+## 🛠️ Tech Stack
 
-* Django, PostgreSQL, Docker
-* HTML, CSS, JavaScript
-* Telegram Bot API, Google OAuth
+- **Backend**: Django 4+
+- **Database**: SQLite (can be upgraded to PostgreSQL/MySQL)
+- **Frontend**: HTML5, CSS3, Bootstrap
+- **Architecture**: Django Class-Based Views, reusable templates, modular apps
 
-### 🚀 O‘rnatish
-
-```bash
-git clone https://github.com/Gulrukh07/Alijahon.git
-cd Alijahon
-cp .env.example .env
-docker-compose up --build
 ```
+## 📁 Project Structure
 
----
 
-## 🇬🇧 English
 
-# 🛍️ Alijahon – Multilingual E-Commerce Platform
+alijahon/
+├── accounts/           # User registration, login, and roles
+├── products/           # Product listing and management
+├── orders/             # Order processing and delivery tracking
+├── templates/          # All HTML templates
+├── static/             # CSS and JS files
+├── manage.py
+└── ...
 
-**Alijahon** is a full-featured e-commerce site built with Django. It supports product listings, user favorites, order history, multi-role dashboards, payment processing, and multilingual access. Users can sign in via phone, Google, or Telegram Bot. Includes admin, operator, and delivery dashboards with analytics.
+````
 
-### ⚙️ Features
+## ⚙️ Getting Started
 
-* 🔐 Login via phone, Google OAuth, or Telegram
-* 🛒 Product listing, favorites, order history
-* 📦 Role-based panels: admin, operator, delivery
-* 📊 System analytics & statistics
-* 🎁 Giveaway module
-* 🌍 Supports 3 languages: UZ, RU, EN
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Gulrukh07/Alijahon.git
+   cd Alijahon
 
-### 🧱 Tech Stack
 
-* Django, PostgreSQL, Docker
-* HTML, CSS, JavaScript
-* Telegram Bot API, Google OAuth
+2. **Set up a virtual environment**:
 
-### 🚀 Installation
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # Windows: venv\Scripts\activate
+   ```
 
-```bash
-git clone https://github.com/Gulrukh07/Alijahon.git
-cd Alijahon
-cp .env.example .env
-docker-compose up --build
-```
+3. **Install dependencies**:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run migrations**:
+
+   ```bash
+   python manage.py migrate
+   ```
+
+5. **Create a superuser**:
+
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+6. **Start the development server**:
+
+   ```bash
+   python manage.py runserver
+   ```
+
+
+## 🧠 Highlights
+
+* Separation of concerns with apps for accounts, products, and orders
+* Reusable templates and views
+* Clean code structure for maintainability
+* Easily extendable for:
+
+    * Payment integration
+    * Inventory tracking
+    * REST APIs (with Django REST Framework)
+
+
+
+## 🙋‍♀️ Author
+
+Developed by [Gulrukh Khayrullaeva](https://github.com/Gulrukh07)
+Feel free to connect and give feedback!
+
