@@ -1,136 +1,61 @@
-🛍️ Alijahon – E-Commerce Platform
+## 🇺🇿 O‘zbekcha
 
-Alijahon — bu zamonaviy va kengaytiriladigan e-commerce veb ilovasi bo‘lib, foydalanuvchilar, adminlar, operatorlar va yetkazib beruvchilar uchun turli rollarni qo‘llab-quvvatlaydi. Ilova Django asosida qurilgan va zamonaviy backend arxitektura amaliyotlarini o‘zida mujassam etgan.
+# 🛍️ Alijahon – Ko‘p tilli E-Commerce Platforma
 
-🎯 Maqsad
+**Alijahon** – bu ko‘p funksiyali, ko‘p tilli onlayn-do‘kon bo‘lib, foydalanuvchilar mahsulotlarni ko‘rish, buyurtma berish, sotuvi uchun mahsulot joylashtirish, sevimlilarni saqlash va tarixni kuzatish imkoniyatlariga ega. Loyiha Django asosida qurilgan va Google, Telegram orqali autentifikatsiya, hamda to‘lov tizimi bilan integratsiyalashgan.
 
-Foydalanuvchilarga mahsulotlarni ko‘rish, xarid qilish, o‘z mahsulotlarini sotuvga qo‘yish, sevimli mahsulotlarni belgilash va buyurtmalar tarixini ko‘rish imkonini beruvchi ko‘p tilli e-commerce platformani yaratish.
+### ⚙️ Imkoniyatlar
 
-🧱 Arxitektura
-📁 Loyihaning asosiy modullari:
+* 🔐 Telefon, Google va Telegram orqali login
+* 🛒 Mahsulotlar, sevimlilar, va buyurtmalar
+* 🧑‍💼 Admin, operator, delivery panellari
+* 📊 Statistik ko‘rsatkichlar
+* 🎁 Giveaway funksiyasi
+* 🌐 3 til: UZ, RU, EN
 
-auth/ – Login & registratsiya (telefon, Google, Telegram orqali)
+### 🧱 Texnologiyalar
 
-products/ – Mahsulotlar bilan ishlash, filtering, favorites
+* Django, PostgreSQL, Docker
+* HTML, CSS, JavaScript
+* Telegram Bot API, Google OAuth
 
-orders/ – Buyurtmalar va tarix
+### 🚀 O‘rnatish
 
-dashboard/ – Admin, operator, yetkazib beruvchi panellari
-
-stats/ – Foydalanuvchi va tizim statistikasi
-
-giveaway/ – Sovrinli o‘yin moduli
-
-multilang/ – UZ, RU, EN tillarni qo‘llab-quvvatlash
-
-🚀 Ishlatilgan texnologiyalar
-
-Texnologiya	Maqsadi
-
-Django -	Asosiy backend framework
-
-PostgreSQL	- Ma’lumotlar bazasi
-
-Docker -	Konteynerlash va orchestration
-
-HTML/CSS/JS	Frontend interfeys
-
-Telegram Bot API -	Telegram orqali login imkoniyati
-
-Google OAuth -	Google orqali autentifikatsiya
-
-Django Admin -	Admin panel
-
-⚙️ Ishga tushirish
-
-Talablar:
-
-Docker 
-
-.env fayl sozlamalari
-
-Ishga tushirish:
-
-bash
-Copy
-Edit
+```bash
+git clone https://github.com/Gulrukh07/Alijahon.git
+cd Alijahon
 cp .env.example .env
 docker-compose up --build
+```
 
-✨ Qo‘shimcha imkoniyatlar
+---
 
-Buyurtmalar xolatini kuztish
+## 🇬🇧 English
 
-Statistik analiz
+# 🛍️ Alijahon – Multilingual E-Commerce Platform
 
-3 tilda interfeys (UZ, RU, EN)
+**Alijahon** is a full-featured e-commerce site built with Django. It supports product listings, user favorites, order history, multi-role dashboards, payment processing, and multilingual access. Users can sign in via phone, Google, or Telegram Bot. Includes admin, operator, and delivery dashboards with analytics.
 
-🤝 Hissa qo‘shish
-Pull requestlar va issue'lar orqali loyihani rivojlantirishda qatnashing.
+### ⚙️ Features
 
-Made with ❤️ by Gulrukh Khayrullaeva
+* 🔐 Login via phone, Google OAuth, or Telegram
+* 🛒 Product listing, favorites, order history
+* 📦 Role-based panels: admin, operator, delivery
+* 📊 System analytics & statistics
+* 🎁 Giveaway module
+* 🌍 Supports 3 languages: UZ, RU, EN
 
+### 🧱 Tech Stack
 
----English
-🛍️ Alijahon – E-Commerce Platform
+* Django, PostgreSQL, Docker
+* HTML, CSS, JavaScript
+* Telegram Bot API, Google OAuth
 
-Alijahon is a modern, scalable e-commerce web application built with Django. It supports various user roles such as customers, admins, operators, and delivery staff. The project demonstrates best practices in backend architecture, multilingual support, and user interaction.
+### 🚀 Installation
 
-🎯 Goal
-
-To build a multilingual e-commerce platform where users can browse and purchase products, manage their favorites and orders, create product listings, and access role-specific dashboards.
-
-🧱 Architecture
-📁 Main Modules:
-
-auth/ – Authentication via phone number, Google, and Telegram
-
-products/ – Product management, filtering, and favorites
-
-orders/ – Order tracking and history
-
-dashboard/ – Admin, operator, and delivery panels
-
-stats/ – System and user analytics
-
-giveaway/ – Giveaway module
-
-multilang/ – Language switch (UZ, RU, EN)
-
-🚀 Technologies Used
-
-Technology	Purpose
-
-Django	Web framework
-PostgreSQL	Database
-Docker -	Containerization & orchestration
-HTML/CSS/JavaScript -	Frontend UI
-Telegram Bot API -	Telegram authentication
-Google OAuth -	Google login support
-Django Admin -	Built-in admin interface
-
-⚙️ Getting Started
-Requirements:
-
-Docker
-
-Properly configured .env file
-
-Run the project:
-
-bash
-Copy
-Edit
+```bash
+git clone https://github.com/Gulrukh07/Alijahon.git
+cd Alijahon
 cp .env.example .env
 docker-compose up --build
-
-✨ Future Improvements
-
-Order logging and tracking
-
-Language toggle (Uzbek 🇺🇿, Russian 🇷🇺, English 🇬🇧)
-
-🤝 Contributions
-You are welcome to contribute via pull requests or by opening issues.
-
-Made with ❤️ by Gulrukh Khayrullaeva
+```
