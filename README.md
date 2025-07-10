@@ -1,7 +1,9 @@
 🛍️ Alijahon – E-Commerce Platform
+
 Alijahon — bu zamonaviy va kengaytiriladigan e-commerce veb ilovasi bo‘lib, foydalanuvchilar, adminlar, operatorlar va yetkazib beruvchilar uchun turli rollarni qo‘llab-quvvatlaydi. Ilova Django asosida qurilgan va zamonaviy backend arxitektura amaliyotlarini o‘zida mujassam etgan.
 
 🎯 Maqsad
+
 Foydalanuvchilarga mahsulotlarni ko‘rish, xarid qilish, o‘z mahsulotlarini sotuvga qo‘yish, sevimli mahsulotlarni belgilash va buyurtmalar tarixini ko‘rish imkonini beruvchi ko‘p tilli e-commerce platformani yaratish.
 
 🧱 Arxitektura
@@ -22,19 +24,28 @@ giveaway/ – Sovrinli o‘yin moduli
 multilang/ – UZ, RU, EN tillarni qo‘llab-quvvatlash
 
 🚀 Ishlatilgan texnologiyalar
+
 Texnologiya	Maqsadi
-Django	Asosiy backend framework
-PostgreSQL	Ma’lumotlar bazasi
-Docker + Compose	Konteynerlash va orchestration
+
+Django -	Asosiy backend framework
+
+PostgreSQL	- Ma’lumotlar bazasi
+
+Docker -	Konteynerlash va orchestration
+
 HTML/CSS/JS	Frontend interfeys
-Telegram Bot API	Telegram orqali login imkoniyati
-Google OAuth	Google orqali autentifikatsiya
-Django Admin	Admin panel
+
+Telegram Bot API -	Telegram orqali login imkoniyati
+
+Google OAuth -	Google orqali autentifikatsiya
+
+Django Admin -	Admin panel
 
 ⚙️ Ishga tushirish
+
 Talablar:
 
-Docker & Docker Compose
+Docker 
 
 .env fayl sozlamalari
 
@@ -48,9 +59,7 @@ docker-compose up --build
 
 ✨ Qo‘shimcha imkoniyatlar
 
-Buyurtmalar tarixi
-
-Giveaway moduli
+Buyurtmalar xolatini kuztish
 
 Statistik analiz
 
@@ -64,9 +73,11 @@ Made with ❤️ by Gulrukh Khayrullaeva
 
 ---English
 🛍️ Alijahon – E-Commerce Platform
+
 Alijahon is a modern, scalable e-commerce web application built with Django. It supports various user roles such as customers, admins, operators, and delivery staff. The project demonstrates best practices in backend architecture, multilingual support, and user interaction.
 
 🎯 Goal
+
 To build a multilingual e-commerce platform where users can browse and purchase products, manage their favorites and orders, create product listings, and access role-specific dashboards.
 
 🧱 Architecture
@@ -87,19 +98,21 @@ giveaway/ – Giveaway module
 multilang/ – Language switch (UZ, RU, EN)
 
 🚀 Technologies Used
+
 Technology	Purpose
+
 Django	Web framework
 PostgreSQL	Database
-Docker + Compose	Containerization & orchestration
-HTML/CSS/JavaScript	Frontend UI
-Telegram Bot API	Telegram authentication
-Google OAuth	Google login support
-Django Admin	Built-in admin interface
+Docker -	Containerization & orchestration
+HTML/CSS/JavaScript -	Frontend UI
+Telegram Bot API -	Telegram authentication
+Google OAuth -	Google login support
+Django Admin -	Built-in admin interface
 
 ⚙️ Getting Started
 Requirements:
 
-Docker & Docker Compose
+Docker
 
 Properly configured .env file
 
@@ -113,11 +126,7 @@ docker-compose up --build
 
 ✨ Future Improvements
 
-Order logging and history
-
-Admin interface enhancements
-
-Giveaway module
+Order logging and tracking
 
 Language toggle (Uzbek 🇺🇿, Russian 🇷🇺, English 🇬🇧)
 
