@@ -5,8 +5,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
-CLIENT_ID = os.getenv('CLIENT_ID')
-CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+# CLIENT_ID = os.getenv('CLIENT_ID')
+# CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -17,8 +17,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
-# Application definition
+CLIENT_ID=os.getenv('CLIENT_ID')
+CLIENT_SECRET=os.getenv('CLIENT_SECRET')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -45,14 +45,14 @@ INSTALLED_APPS = [
 ]
 USE_L10N = True
 
-LANGUAGES = [
-    ("en", "English"),
-    ("uz", "Uzbek"),
-    ("ru", "Russian"),
-]
-LOCALE_PATHS = [
-    join(BASE_DIR, 'locale'),
-]
+# LANGUAGES = [
+#     ("en", "English"),
+#     ("uz", "Uzbek"),
+#     ("ru", "Russian"),
+# ]
+# LOCALE_PATHS = [
+#     join(BASE_DIR, 'locale'),
+# ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -126,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tashkent'
 
 USE_I18N = True
 
@@ -152,11 +152,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'authenticate.User'
 
-# LOGIN_URL = 'auth'
+LOGIN_URL = 'auth'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend'
+    # 'allauth.account.auth_backends.AuthenticationBackend'
 ]
 
 SOCIALACCOUNT_PROVIDERS = {

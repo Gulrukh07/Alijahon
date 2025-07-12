@@ -75,6 +75,8 @@ class User(AbstractUser):
     role = TextField(choices=UserRoles.choices, default=UserRoles.USER)
     email = CharField(max_length=255, blank=True, null=True, unique=True)
     username = CharField(max_length=255, blank=True, null=True)
+    # email = None
+    # username = None
 
     @property
     def full_name(self):

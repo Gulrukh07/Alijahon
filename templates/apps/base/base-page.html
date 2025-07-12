@@ -826,14 +826,14 @@
                             </label>
                         </div>
                     </li>
-                    <form action="{% url 'set_language' %}" method="post">
-                        {% csrf_token %}
-                        <select name="language" onchange="this.form.submit()">
-                            <option value="uz" {% if LANGUAGE_CODE == 'uz' %}selected{% endif %}>O'zbek</option>
-                            <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
-                            <option value="ru" {% if LANGUAGE_CODE == 'ru' %}selected{% endif %}>Russian</option>
-                        </select>
-                    </form>
+{#                    <form action="{% url 'set_language' %}" method="post">#}
+{#                        {% csrf_token %}#}
+{#                        <select name="language" onchange="this.form.submit()">#}
+{#                            <option value="uz" {% if LANGUAGE_CODE == 'uz' %}selected{% endif %}>O'zbek</option>#}
+{#                            <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>#}
+{#                            <option value="ru" {% if LANGUAGE_CODE == 'ru' %}selected{% endif %}>Russian</option>#}
+{#                        </select>#}
+{#                    </form>#}
 
 
                     <li class="nav-item dropdown">

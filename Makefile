@@ -7,10 +7,8 @@ admin:
 
 loaddata:
 	python3 manage.py loaddata apps/fixtures/product.json
-
-
 dumpdata:
-	python3 manage.py dumpdata apps.Product > product.json
+	python3 manage.py dumpdata apps.Category > category.json
 
 translate:
 	django-admin makemessages -l uz

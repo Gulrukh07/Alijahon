@@ -1,5 +1,6 @@
 from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import login
+from django.contrib.auth import logout
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
@@ -10,11 +11,6 @@ from django.views.generic import FormView, UpdateView
 
 from authenticate.forms import AuthForm, ProfileForm, PasswordForm
 from authenticate.models import User, Region, District
-
-from django.contrib.auth import authenticate, login
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-
 
 
 class AuthCreateView(FormView):
